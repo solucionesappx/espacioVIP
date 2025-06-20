@@ -241,9 +241,9 @@
             messageContainer.classList.add(isError ? 'bg-red-500' : 'bg-blue-500');
             // La siguiente línea es la que controla la desaparición automática.
             // Para que el mensaje permanezca, simplemente coméntala o elimínala.
-            // setTimeout(() => {
-            //     messageContainer.classList.add('hidden');
-            // }, 5000); 
+            setTimeout(() => {
+                 messageContainer.classList.add('hidden');
+            }, 1000); 
         };
 
         const setAppMode = (mode) => {
