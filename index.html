@@ -1,7 +1,7 @@
 <!DOCTYPE html>
 <html lang="es">
 <head>
-    <meta charset="UTF- mèo.0">
+    <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Gestión de Clientes</title>
     <!-- Tailwind CSS CDN -->
@@ -79,29 +79,6 @@
                     </button>
                 </form>
             </div>
-            <!-- Separator -->
-            <div class="relative flex items-center mt-8">
-                <div class="flex-grow border-t border-gray-300"></div>
-                <span class="flex-shrink mx-4 text-gray-500">O</span>
-                <div class="flex-grow border-t border-gray-300"></div>
-            </div>
-
-            <!-- Admin Login Form -->
-            <div class="mt-8">
-                <h2 class="text-2xl font-semibold text-gray-700 mb-4 text-center">Iniciar Sesión (Administrador)</h2>
-                <form id="admin-login-form" class="space-y-4">
-                    <div>
-                        <input type="email" id="admin-email" placeholder="Correo de Administrador (admin@example.com)" class="w-full p-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-gray-500 focus:border-transparent" required>
-                    </div>
-                    <div>
-                        <input type="password" id="admin-password" placeholder="Contraseña" class="w-full p-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-gray-500 focus:border-transparent" required>
-                    </div>
-                    <button type="submit" id="admin-login-btn" class="w-full py-3 px-6 bg-gray-700 text-white font-semibold rounded-lg shadow-md hover:bg-gray-800 transition duration-300 transform hover:scale-105 focus:outline-none focus:ring-2 focus:ring-gray-600 focus:ring-opacity-75">
-                        Acceder como Administrador
-                    </button>
-                </form>
-            </div>
-           
         </div>
 
         <!-- User View -->
@@ -218,11 +195,11 @@
         const loginClientIdxInput = document.getElementById('login-client-idx'); 
         const userLoginBtn = document.getElementById('user-login-btn'); 
 
-        // Admin login form elements
-        const adminLoginForm = document.getElementById('admin-login-form');
-        const adminEmailInput = document.getElementById('admin-email');
-        const adminPasswordInput = document.getElementById('admin-password');
-        const adminLoginBtn = document.getElementById('admin-login-btn'); // New: Reference to the admin login button
+        // Admin login form elements (Removed from HTML, so these would be null)
+        // const adminLoginForm = document.getElementById('admin-login-form');
+        // const adminEmailInput = document.getElementById('admin-email');
+        // const adminPasswordInput = document.getElementById('admin-password');
+        // const adminLoginBtn = document.getElementById('admin-login-btn'); // New: Reference to the admin login button
 
         // User view display elements
         const userDisplayEmail = document.getElementById('user-display-email');
@@ -246,7 +223,7 @@
         const adminLogoutBtn = document.getElementById('admin-logout-btn');
 
         // !!! REEMPLAZA ESTA URL CON LA LA URL DE DESPLIEGUE DE TU APPS SCRIPT !!!
-        const appsScriptUrl = 'https://script.google.com/macros/s/AKfycbxyfhWoAzcN9Pf5VP3M39szabUhSvUJvJDEXKIliMSLQD-4QHsb9kFVerWcuAD77xjqJw/exec'; 
+        const appsScriptUrl = 'https://script.google.com/macros/s/AKfycbwVwfUFwFSWZFZhTiBozjtj_-ZhBcWwnTrs1ajmOaNhkjE_h8qIC8YdTlb5EeJrBIbrdw/exec'; 
 
         // --- State Variables ---
         let appMode = 'auth'; 
@@ -255,7 +232,7 @@
         let selectedClientIds = []; 
         let isAdminActionLoading = false;
         let isUserLoginLoading = false; 
-        let isAdminLoginLoading = false; // New: Loading state for admin login
+        // let isAdminLoginLoading = false; // Admin login functionality removed from UI
 
         // --- Helper Functions ---
         const showMessage = (msg, isError = false) => {
@@ -429,6 +406,7 @@
             showMessage("Has cerrado sesión.");
         };
 
+        // handleAdminLogin is kept for potential future use, but not directly called from UI
         const handleAdminLogin = async (e) => {
             e.preventDefault();
             const adminEmail = adminEmailInput.value;
@@ -440,49 +418,42 @@
             }
 
             // Show loading state for the button
-            isAdminLoginLoading = true;
-            adminLoginBtn.textContent = 'Procesando...';
-            adminLoginBtn.disabled = true;
-            adminLoginBtn.classList.add('bg-gray-300', 'text-gray-700', 'cursor-not-allowed');
-            adminLoginBtn.classList.remove('bg-gray-700', 'text-white', 'hover:bg-gray-800');
+            // isAdminLoginLoading = true; // No longer needed if admin login form is removed
+            // adminLoginBtn.textContent = 'Procesando...'; // No longer needed
+            // adminLoginBtn.disabled = true; // No longer needed
+            // adminLoginBtn.classList.add('bg-gray-300', 'text-gray-700', 'cursor-not-allowed'); // No longer needed
+            // adminLoginBtn.classList.remove('bg-gray-700', 'text-white', 'hover:bg-gray-800'); // No longer needed
 
             try {
                 const response = await fetch(appsScriptUrl, {
                     method: 'POST',
-                    mode: 'no-cors', // Importante para cross-origin requests
+                    mode: 'no-cors', 
                     headers: {
                         'Content-Type': 'application/json',
                     },
                     body: JSON.stringify({
-                        action: 'adminLogin', // Indicar al Apps Script que es una solicitud de login de admin
+                        action: 'adminLogin', 
                         email: adminEmail,
                         password: adminPassword
                     }),
                 });
-
-                // In 'no-cors' mode, client-side JS cannot read the response body directly.
-                // We assume success if the fetch operation itself doesn't throw a network error.
-                // For real-world robustness, enable CORS on Apps Script and read the JSON response.
                 
-                // Set app mode and fetch data as if login was successful.
-                // If credentials were truly incorrect, the admin panel would load empty
-                // or with an error if CORS was configured. With no-cors, it's optimistic.
                 setAppMode('adminView');
                 adminEmailInput.value = '';
                 adminPasswordInput.value = '';
-                await fetchAllClientsForAdmin(); // Fetch all client data for admin dashboard from GSheet
-                showMessage("Acceso de administrador exitoso."); // This message is optimistic due to no-cors
+                await fetchAllClientsForAdmin(); 
+                showMessage("Acceso de administrador exitoso."); 
 
             } catch (error) {
                 console.error("Error al enviar credenciales de administrador a Apps Script:", error);
                 showMessage(`Error de conexión al intentar acceder como administrador. Inténtalo de nuevo.`, true);
             } finally {
                 // Ensure loading state is reset
-                isAdminLoginLoading = false;
-                adminLoginBtn.textContent = 'Acceder como Administrador';
-                adminLoginBtn.disabled = false;
-                adminLoginBtn.classList.remove('bg-gray-300', 'text-gray-700', 'cursor-not-allowed');
-                adminLoginBtn.classList.add('bg-gray-700', 'text-white', 'hover:bg-gray-800');
+                // isAdminLoginLoading = false; // No longer needed
+                // adminLoginBtn.textContent = 'Acceder como Administrador'; // No longer needed
+                // adminLoginBtn.disabled = false; // No longer needed
+                // adminLoginBtn.classList.remove('bg-gray-300', 'text-gray-700', 'cursor-not-allowed'); // No longer needed
+                // adminLoginBtn.classList.add('bg-gray-700', 'text-white', 'hover:bg-gray-800'); // No longer needed
             }
         };
 
@@ -503,7 +474,6 @@
                     adminClients = []; 
                 } else {
                     adminClients = result; 
-                    // No need for a message here, the table will populate.
                 }
             } catch (error) {
                 console.error("Error fetching clients from Apps Script:", error);
@@ -586,7 +556,7 @@
         window.onload = () => {
             setAppMode('auth'); 
             userLoginForm.addEventListener('submit', handleLogin);
-            adminLoginForm.addEventListener('submit', handleAdminLogin);
+            // adminLoginForm.addEventListener('submit', handleAdminLogin); // REMOVED: Admin login form no longer exists in HTML
             userLogoutBtn.addEventListener('click', handleLogout);
             markDeletedBtn.addEventListener('click', handleMarkClientsAsDeleted);
             adminLogoutBtn.addEventListener('click', handleAdminLogout);
