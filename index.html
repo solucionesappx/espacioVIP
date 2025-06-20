@@ -74,7 +74,7 @@
                     <div>
                         <input type="text" id="login-client-idx" placeholder="ID Cliente (Cédula de Identidad)" class="w-full p-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-indigo-500 focus:border-transparent" required>
                     </div>
-                    <button type="submit" class="w-full py-3 px-6 bg-indigo-600 text-white font-semibold rounded-lg shadow-md hover:bg-indigo-700 transition duration-300 transform hover:scale-105 focus:outline-none focus:ring-2 focus:ring-indigo-500 focus:ring-opacity-75">
+                    <button type="submit" id="user-login-btn" class="w-full py-3 px-6 bg-indigo-600 text-white font-semibold rounded-lg shadow-md hover:bg-indigo-700 transition duration-300 transform hover:scale-105 focus:outline-none focus:ring-2 focus:ring-indigo-500 focus:ring-opacity-75">
                         Acceder
                     </button>
                 </form>
@@ -216,6 +216,7 @@
         const userLoginForm = document.getElementById('user-login-form');
         const loginEmailInput = document.getElementById('login-email');
         const loginClientIdxInput = document.getElementById('login-client-idx'); 
+        const userLoginBtn = document.getElementById('user-login-btn'); // New: Reference to the user login button
 
         // Admin login form elements
         const adminLoginForm = document.getElementById('admin-login-form');
@@ -252,6 +253,7 @@
         let adminClients = []; 
         let selectedClientIds = []; 
         let isAdminActionLoading = false;
+        let isUserLoginLoading = false; // New: Loading state for user login
 
         // --- Helper Functions ---
         const showMessage = (msg, isError = false) => {
@@ -354,6 +356,11 @@
                 return;
             }
 
+            // Show loading state for the button
+            isUserLoginLoading = true;
+            userLoginBtn.textContent = 'Procesando...';
+            userLoginBtn.disabled = true;
+
             let clients;
             try {
                 const response = await fetch(appsScriptUrl + '?action=getAllClients');
@@ -368,6 +375,11 @@
                 console.error("Error al cargar clientes para iniciar sesión desde Apps Script:", error);
                 showMessage(`Error al conectar con el servidor para iniciar sesión: ${error.message}`, true);
                 return;
+            } finally {
+                // Ensure loading state is reset even if there's an error
+                isUserLoginLoading = false;
+                userLoginBtn.textContent = 'Acceder';
+                userLoginBtn.disabled = false;
             }
             
             const foundUser = clients.find(client =>
@@ -389,7 +401,8 @@
                     nota: foundUser.Suscripcion_Nota,
                 };
                 setAppMode('userView');
-                showMessage(`¡Bienvenido, ${loggedInUser.name}!`);
+                // Removed the welcome message
+                // showMessage(`¡Bienvenido, ${loggedInUser.name}!`); 
                 userDisplayEmail.textContent = loggedInUser.email;
                 userDisplayName.textContent = loggedInUser.name;
                 userDisplayPhone.textContent = loggedInUser.phone;
@@ -443,13 +456,6 @@
                 // but the request will be sent. For verification, we assume success
                 // if there's no network error, and rely on Apps Script logs for debugging.
                 // In a real app, you'd configure CORS to read the JSON response.
-
-                // For this example, we'll assume success if the fetch doesn't throw.
-                // A more robust client-side check would involve a response from Apps Script
-                // that client can read (requires CORS config on Apps Script side).
-                // Given "no-cors", we can't reliably read the `result.success` from here.
-                // So, for demonstration, we'll *assume* success if the request was sent without network error.
-                // If the user reports it's not working after this, then we need to enable CORS for proper error handling.
 
                 // For now, after successful request send, we rely on the internal Apps Script validation.
                 // This means the success message here is optimistic.
@@ -573,3 +579,4 @@
     </script>
 </body>
 </html>
+
