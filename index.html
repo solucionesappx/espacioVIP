@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Gesti髇 de Clientes</title>
+    <title>Gesti贸n de Clientes</title>
     <!-- Tailwind CSS CDN -->
     <script src="https://cdn.tailwindcss.com"></script>
     <style>
@@ -57,7 +57,7 @@
 
     <div id="app" class="bg-white p-8 rounded-xl shadow-2xl w-full max-w-md">
         <h1 class="text-3xl font-bold text-center text-gray-800 mb-8">
-            Gesti髇 de Clientes
+            Gesti贸n de Clientes
         </h1>
 
         <div id="message-container" class="mb-4 p-3 text-sm text-center text-white bg-blue-500 rounded-md hidden"></div>
@@ -66,13 +66,13 @@
         <div id="auth-view">
             <!-- User Login Form -->
             <div class="mb-8">
-                <h2 class="text-2xl font-semibold text-gray-700 mb-4 text-center">Iniciar Sesi髇 (Usuario)</h2>
+                <h2 class="text-2xl font-semibold text-gray-700 mb-4 text-center">Iniciar Sesi贸n (Usuario)</h2>
                 <form id="user-login-form" class="space-y-4">
                     <div>
-                        <input type="email" id="login-email" placeholder="Correo Electr髇ico" class="w-full p-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-indigo-500 focus:border-transparent" required>
+                        <input type="email" id="login-email" placeholder="Correo Electr贸nico" class="w-full p-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-indigo-500 focus:border-transparent" required>
                     </div>
                     <div>
-                        <input type="text" id="login-client-idx" placeholder="ID Cliente (C閐ula de Identidad)" class="w-full p-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-indigo-500 focus:border-transparent" required>
+                        <input type="text" id="login-client-idx" placeholder="ID Cliente (C茅dula de Identidad)" class="w-full p-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-indigo-500 focus:border-transparent" required>
                     </div>
                     <button type="submit" class="w-full py-3 px-6 bg-indigo-600 text-white font-semibold rounded-lg shadow-md hover:bg-indigo-700 transition duration-300 transform hover:scale-105 focus:outline-none focus:ring-2 focus:ring-indigo-500 focus:ring-opacity-75">
                         Acceder
@@ -89,13 +89,13 @@
 
             <!-- Admin Login Form -->
             <div class="mt-8">
-                <h2 class="text-2xl font-semibold text-gray-700 mb-4 text-center">Iniciar Sesi髇 (Administrador)</h2>
+                <h2 class="text-2xl font-semibold text-gray-700 mb-4 text-center">Iniciar Sesi贸n (Administrador)</h2>
                 <form id="admin-login-form" class="space-y-4">
                     <div>
                         <input type="email" id="admin-email" placeholder="Correo de Administrador (admin@example.com)" class="w-full p-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-gray-500 focus:border-transparent" required>
                     </div>
                     <div>
-                        <input type="password" id="admin-password" placeholder="Contrase馻" class="w-full p-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-gray-500 focus:border-transparent" required>
+                        <input type="password" id="admin-password" placeholder="Contrase帽a" class="w-full p-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-gray-500 focus:border-transparent" required>
                     </div>
                     <button type="submit" class="w-full py-3 px-6 bg-gray-700 text-white font-semibold rounded-lg shadow-md hover:bg-gray-800 transition duration-300 transform hover:scale-105 focus:outline-none focus:ring-2 focus:ring-gray-600 focus:ring-opacity-75">
                         Acceder como Administrador
@@ -115,30 +115,30 @@
                     <span class="font-medium">Nombre:</span> <span id="user-display-name"></span>
                 </p>
                 <p class="text-gray-700 text-lg mb-2">
-                    <span class="font-medium">Tel閒ono:</span> <span id="user-display-phone"></span>
+                    <span class="font-medium">Tel茅fono:</span> <span id="user-display-phone"></span>
                 </p>
                 <p class="text-gray-700 text-lg mb-2">
-                    <span class="font-medium">ID Suscripci髇:</span> <span id="user-display-id-sub"></span>
+                    <span class="font-medium">ID Suscripci贸n:</span> <span id="user-display-id-sub"></span>
                 </p>
                 <p class="text-gray-700 text-lg mb-2">
                     <span class="font-medium">Plan:</span> <span id="user-display-plan"></span>
                 </p>
                 <p class="text-gray-700 text-lg mb-2">
-                    <span class="font-medium">V醠ido desde:</span> <span id="user-display-ini"></span>
+                    <span class="font-medium">V谩lido desde:</span> <span id="user-display-ini"></span>
                 </p>
                 <p class="text-gray-700 text-lg mb-2">
                     <span class="font-medium">Hasta el:</span> <span id="user-display-fin"></span>
                 </p>
                 <p class="text-gray-700 text-lg mb-2">
-                    <span class="font-medium">Estado Suscripci髇:</span> <span id="user-display-status"></span>
+                    <span class="font-medium">Estado Suscripci贸n:</span> <span id="user-display-status"></span>
                 </p>
                 <p class="text-gray-700 text-lg">
-                    <span class="font-medium">Nota Suscripci髇:</span> <span id="user-display-nota"></span>
+                    <span class="font-medium">Nota Suscripci贸n:</span> <span id="user-display-nota"></span>
                 </p>
             </div>
 
             <button id="user-logout-btn" class="mt-2 w-full py-3 px-6 bg-red-600 text-white font-semibold rounded-lg shadow-md hover:bg-red-700 transition duration-300 transform hover:scale-105 focus:outline-none focus:ring-2 focus:ring-red-500 focus:ring-opacity-75">
-                Cerrar Sesi髇
+                Cerrar Sesi贸n
             </button>
         </div>
 
@@ -147,7 +147,7 @@
             <h2 class="text-3xl font-bold text-gray-800 mb-6">Panel de Administrador</h2>
             <div class="bg-gray-100 p-6 rounded-lg w-full max-w-2xl overflow-x-auto shadow-md">
                 <h3 class="text-xl font-semibold text-gray-700 mb-4">Clientes Registrados</h3>
-                <p id="admin-loading-message" class="text-gray-600 text-center py-8 hidden">Cargando datos o procesando acci髇...</p>
+                <p id="admin-loading-message" class="text-gray-600 text-center py-8 hidden">Cargando datos o procesando acci贸n...</p>
                 <div id="admin-clients-table-container">
                     <table class="min-w-full divide-y divide-gray-200">
                         <thead class="bg-gray-50">
@@ -162,28 +162,28 @@
                                     Correo
                                 </th>
                                 <th class="px-3 py-2 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
-                                    Tel閒ono
+                                    Tel茅fono
                                 </th>
                                 <th class="px-3 py-2 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
-                                    ID Suscripci髇
+                                    ID Suscripci贸n
                                 </th>
                                 <th class="px-3 py-2 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
-                                    Plan Suscripci髇
+                                    Plan Suscripci贸n
                                 </th>
                                 <th class="px-3 py-2 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
-                                    Inicio Suscripci髇
+                                    Inicio Suscripci贸n
                                 </th>
                                 <th class="px-3 py-2 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
-                                    Fin Suscripci髇
+                                    Fin Suscripci贸n
                                 </th>
                                 <th class="px-3 py-2 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
-                                    Estado Suscripci髇
+                                    Estado Suscripci贸n
                                 </th>
                                 <th class="px-3 py-2 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
-                                    Notas Suscripci髇
+                                    Notas Suscripci贸n
                                 </th>
                                 <th class="px-3 py-2 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
-                                    Condici髇
+                                    Condici贸n
                                 </th>
                             </tr>
                         </thead>
@@ -199,7 +199,7 @@
                     Seleccionar para Borrados (0)
                 </button>
                 <button id="admin-logout-btn" class="py-3 px-6 font-semibold rounded-lg shadow-md transition duration-300 transform hover:scale-105 focus:outline-none focus:ring-2 focus:ring-gray-400 focus:ring-opacity-75 bg-gray-500 text-white">
-                    Cerrar Sesi髇 (Admin)
+                    Cerrar Sesi贸n (Admin)
                 </button>
             </div>
         </div>
@@ -350,7 +350,7 @@
         const handleLogin = async (e) => {
             e.preventDefault();
             if (!loginEmailInput.value || !loginClientIdxInput.value) {
-                showMessage("Por favor, introduce tu correo y ID de Cliente para iniciar sesi髇.", true);
+                showMessage("Por favor, introduce tu correo y ID de Cliente para iniciar sesi贸n.", true);
                 return;
             }
 
@@ -360,13 +360,13 @@
                 const result = await response.json();
 
                 if (result.success === false) {
-                    showMessage(`Error al cargar datos para iniciar sesi髇: ${result.error}`, true);
+                    showMessage(`Error al cargar datos para iniciar sesi贸n: ${result.error}`, true);
                     return;
                 }
                 clients = result;
             } catch (error) {
-                console.error("Error al cargar clientes para iniciar sesi髇 desde Apps Script:", error);
-                showMessage(`Error al conectar con el servidor para iniciar sesi髇: ${error.message}`, true);
+                console.error("Error al cargar clientes para iniciar sesi贸n desde Apps Script:", error);
+                showMessage(`Error al conectar con el servidor para iniciar sesi贸n: ${error.message}`, true);
                 return;
             }
             
@@ -389,7 +389,7 @@
                     nota: foundUser.Suscripcion_Nota,
                 };
                 setAppMode('userView');
-                showMessage(`ienvenido, ${loggedInUser.name}!`);
+                showMessage(`隆Bienvenido, ${loggedInUser.name}!`);
                 userDisplayEmail.textContent = loggedInUser.email;
                 userDisplayName.textContent = loggedInUser.name;
                 userDisplayPhone.textContent = loggedInUser.phone;
@@ -411,7 +411,7 @@
         const handleLogout = () => {
             loggedInUser = null;
             setAppMode('auth');
-            showMessage("Has cerrado sesi髇.");
+            showMessage("Has cerrado sesi贸n.");
         };
 
         const handleAdminLogin = async (e) => {
@@ -420,7 +420,7 @@
             const adminPassword = adminPasswordInput.value;
 
             if (!adminEmail || !adminPassword) {
-                showMessage("Por favor, introduce el correo y la contrase馻 del administrador.", true);
+                showMessage("Por favor, introduce el correo y la contrase帽a del administrador.", true);
                 return;
             }
 
@@ -453,7 +453,7 @@
 
                 // For now, after successful request send, we rely on the internal Apps Script validation.
                 // This means the success message here is optimistic.
-                showMessage("Credenciales enviadas para verificaci髇. Accediendo...", false);
+                showMessage("Credenciales enviadas para verificaci贸n. Accediendo...", false);
                 setAppMode('adminView');
                 adminEmailInput.value = '';
                 adminPasswordInput.value = '';
@@ -461,7 +461,7 @@
 
             } catch (error) {
                 console.error("Error al enviar credenciales de administrador a Apps Script:", error);
-                showMessage(`Error de conexi髇 al intentar acceder como administrador. Int閚talo de nuevo.`, true);
+                showMessage(`Error de conexi贸n al intentar acceder como administrador. Int茅ntalo de nuevo.`, true);
             }
         };
 
@@ -558,7 +558,7 @@
             adminClients = []; 
             selectedClientIds = [];
             setAppMode('auth');
-            showMessage("Sesi髇 de administrador cerrada.");
+            showMessage("Sesi贸n de administrador cerrada.");
         };
 
         // --- Initial Setup and Event Listeners ---
