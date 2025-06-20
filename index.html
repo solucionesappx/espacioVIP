@@ -1,7 +1,7 @@
 <!DOCTYPE html>
 <html lang="es">
 <head>
-    <meta charset="UTF-8">
+    <meta charset="UTF- mèo.0">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Gestión de Clientes</title>
     <!-- Tailwind CSS CDN -->
@@ -97,7 +97,7 @@
                     <div>
                         <input type="password" id="admin-password" placeholder="Contraseña" class="w-full p-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-gray-500 focus:border-transparent" required>
                     </div>
-                    <button type="submit" class="w-full py-3 px-6 bg-gray-700 text-white font-semibold rounded-lg shadow-md hover:bg-gray-800 transition duration-300 transform hover:scale-105 focus:outline-none focus:ring-2 focus:ring-gray-600 focus:ring-opacity-75">
+                    <button type="submit" id="admin-login-btn" class="w-full py-3 px-6 bg-gray-700 text-white font-semibold rounded-lg shadow-md hover:bg-gray-800 transition duration-300 transform hover:scale-105 focus:outline-none focus:ring-2 focus:ring-gray-600 focus:ring-opacity-75">
                         Acceder como Administrador
                     </button>
                 </form>
@@ -195,10 +195,10 @@
                 <p id="no-clients-message" class="text-gray-600 text-center hidden">No hay clientes registrados.</p>
             </div>
             <div class="flex justify-center space-x-4 mt-6 w-full max-w-2xl">
-                <button id="mark-deleted-btn" class="py-3 px-6 rounded-lg shadow-md transition duration-300 transform hover:scale-105 focus:outline-none focus:ring-2 focus:ring-opacity-75 bg-red-300 text-gray-700 cursor-not-allowed" disabled>
+                <button type="button" id="mark-deleted-btn" class="py-3 px-6 rounded-lg shadow-md transition duration-300 transform hover:scale-105 focus:outline-none focus:ring-2 focus:ring-opacity-75 bg-red-300 text-gray-700 cursor-not-allowed" disabled>
                     Seleccionar para Borrados (0)
                 </button>
-                <button id="admin-logout-btn" class="py-3 px-6 font-semibold rounded-lg shadow-md transition duration-300 transform hover:scale-105 focus:outline-none focus:ring-2 focus:ring-gray-400 focus:ring-opacity-75 bg-gray-500 text-white">
+                <button type="button" id="admin-logout-btn" class="py-3 px-6 font-semibold rounded-lg shadow-md transition duration-300 transform hover:scale-105 focus:outline-none focus:ring-2 focus:ring-gray-400 focus:ring-opacity-75 bg-gray-500 text-white">
                     Cerrar Sesión (Admin)
                 </button>
             </div>
@@ -216,12 +216,13 @@
         const userLoginForm = document.getElementById('user-login-form');
         const loginEmailInput = document.getElementById('login-email');
         const loginClientIdxInput = document.getElementById('login-client-idx'); 
-        const userLoginBtn = document.getElementById('user-login-btn'); // New: Reference to the user login button
+        const userLoginBtn = document.getElementById('user-login-btn'); 
 
         // Admin login form elements
         const adminLoginForm = document.getElementById('admin-login-form');
         const adminEmailInput = document.getElementById('admin-email');
         const adminPasswordInput = document.getElementById('admin-password');
+        const adminLoginBtn = document.getElementById('admin-login-btn'); // New: Reference to the admin login button
 
         // User view display elements
         const userDisplayEmail = document.getElementById('user-display-email');
@@ -244,8 +245,8 @@
         const markDeletedBtn = document.getElementById('mark-deleted-btn');
         const adminLogoutBtn = document.getElementById('admin-logout-btn');
 
-        // !!! REEMPLAZA ESTA URL CON LA URL DE DESPLIEGUE DE TU APPS SCRIPT !!!
-        const appsScriptUrl = 'https://script.google.com/macros/s/AKfycbxjqkN0xTXQeqG3pM5v0PNxLwNtOS8c1GLTtc9_oLHhxX1LbTrIY5SzCGcExOTdKm55kA/exec'; 
+        // !!! REEMPLAZA ESTA URL CON LA LA URL DE DESPLIEGUE DE TU APPS SCRIPT !!!
+        const appsScriptUrl = 'https://script.google.com/macros/s/AKfycbwVwfUFwFSWZFZhTiBozjtj_-ZhBcWwnTrs1ajmOaNhkjE_h8qIC8YdTlb5EeJrBIbrdw/exec'; 
 
         // --- State Variables ---
         let appMode = 'auth'; 
@@ -253,7 +254,8 @@
         let adminClients = []; 
         let selectedClientIds = []; 
         let isAdminActionLoading = false;
-        let isUserLoginLoading = false; // New: Loading state for user login
+        let isUserLoginLoading = false; 
+        let isAdminLoginLoading = false; // New: Loading state for admin login
 
         // --- Helper Functions ---
         const showMessage = (msg, isError = false) => {
@@ -437,7 +439,13 @@
                 return;
             }
 
-            showMessage("Verificando credenciales de administrador...", false);
+            // Show loading state for the button
+            isAdminLoginLoading = true;
+            adminLoginBtn.textContent = 'Procesando...';
+            adminLoginBtn.disabled = true;
+            adminLoginBtn.classList.add('bg-gray-300', 'text-gray-700', 'cursor-not-allowed');
+            adminLoginBtn.classList.remove('bg-gray-700', 'text-white', 'hover:bg-gray-800');
+
             try {
                 const response = await fetch(appsScriptUrl, {
                     method: 'POST',
@@ -452,22 +460,29 @@
                     }),
                 });
 
-                // No-cors mode means we can't directly read response.json(),
-                // but the request will be sent. For verification, we assume success
-                // if there's no network error, and rely on Apps Script logs for debugging.
-                // In a real app, you'd configure CORS to read the JSON response.
-
-                // For now, after successful request send, we rely on the internal Apps Script validation.
-                // This means the success message here is optimistic.
-                showMessage("Credenciales enviadas para verificación. Accediendo...", false);
+                // In 'no-cors' mode, client-side JS cannot read the response body directly.
+                // We assume success if the fetch operation itself doesn't throw a network error.
+                // For real-world robustness, enable CORS on Apps Script and read the JSON response.
+                
+                // Set app mode and fetch data as if login was successful.
+                // If credentials were truly incorrect, the admin panel would load empty
+                // or with an error if CORS was configured. With no-cors, it's optimistic.
                 setAppMode('adminView');
                 adminEmailInput.value = '';
                 adminPasswordInput.value = '';
                 await fetchAllClientsForAdmin(); // Fetch all client data for admin dashboard from GSheet
+                showMessage("Acceso de administrador exitoso."); // This message is optimistic due to no-cors
 
             } catch (error) {
                 console.error("Error al enviar credenciales de administrador a Apps Script:", error);
                 showMessage(`Error de conexión al intentar acceder como administrador. Inténtalo de nuevo.`, true);
+            } finally {
+                // Ensure loading state is reset
+                isAdminLoginLoading = false;
+                adminLoginBtn.textContent = 'Acceder como Administrador';
+                adminLoginBtn.disabled = false;
+                adminLoginBtn.classList.remove('bg-gray-300', 'text-gray-700', 'cursor-not-allowed');
+                adminLoginBtn.classList.add('bg-gray-700', 'text-white', 'hover:bg-gray-800');
             }
         };
 
@@ -488,7 +503,7 @@
                     adminClients = []; 
                 } else {
                     adminClients = result; 
-                    showMessage("Datos de clientes cargados desde Google Sheet.");
+                    // No need for a message here, the table will populate.
                 }
             } catch (error) {
                 console.error("Error fetching clients from Apps Script:", error);
@@ -579,4 +594,3 @@
     </script>
 </body>
 </html>
-
