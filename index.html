@@ -239,9 +239,11 @@
             messageContainer.textContent = msg;
             messageContainer.classList.remove('hidden', 'bg-blue-500', 'bg-red-500');
             messageContainer.classList.add(isError ? 'bg-red-500' : 'bg-blue-500');
-            setTimeout(() => {
-                messageContainer.classList.add('hidden');
-            }, 5000); 
+            // La siguiente línea es la que controla la desaparición automática.
+            // Para que el mensaje permanezca, simplemente coméntala o elimínala.
+            // setTimeout(() => {
+            //     messageContainer.classList.add('hidden');
+            // }, 5000); 
         };
 
         const setAppMode = (mode) => {
@@ -409,52 +411,46 @@
         // handleAdminLogin is kept for potential future use, but not directly called from UI
         const handleAdminLogin = async (e) => {
             e.preventDefault();
-            const adminEmail = adminEmailInput.value;
-            const adminPassword = adminPasswordInput.value;
+            // adminEmailInput y adminPasswordInput ya no existen en el HTML
+            // Si esta función es llamada, significaría que la lógica de admin
+            // se ha eliminado del HTML pero la llamada a esta función no.
+            // Para evitar errores, podemos simplemente mostrar un mensaje o redirigir.
+            showMessage("La funcionalidad de inicio de sesión de administrador ha sido deshabilitada.", true);
+            return;
 
-            if (!adminEmail || !adminPassword) {
-                showMessage("Por favor, introduce el correo y la contraseña del administrador.", true);
-                return;
-            }
+            // const adminEmail = adminEmailInput.value;
+            // const adminPassword = adminPasswordInput.value;
 
-            // Show loading state for the button
-            // isAdminLoginLoading = true; // No longer needed if admin login form is removed
-            // adminLoginBtn.textContent = 'Procesando...'; // No longer needed
-            // adminLoginBtn.disabled = true; // No longer needed
-            // adminLoginBtn.classList.add('bg-gray-300', 'text-gray-700', 'cursor-not-allowed'); // No longer needed
-            // adminLoginBtn.classList.remove('bg-gray-700', 'text-white', 'hover:bg-gray-800'); // No longer needed
+            // if (!adminEmail || !adminPassword) {
+            //     showMessage("Por favor, introduce el correo y la contraseña del administrador.", true);
+            //     return;
+            // }
 
-            try {
-                const response = await fetch(appsScriptUrl, {
-                    method: 'POST',
-                    mode: 'no-cors', 
-                    headers: {
-                        'Content-Type': 'application/json',
-                    },
-                    body: JSON.stringify({
-                        action: 'adminLogin', 
-                        email: adminEmail,
-                        password: adminPassword
-                    }),
-                });
+            // try {
+            //     const response = await fetch(appsScriptUrl, {
+            //         method: 'POST',
+            //         mode: 'no-cors', 
+            //         headers: {
+            //             'Content-Type': 'application/json',
+            //         },
+            //         body: JSON.stringify({
+            //             action: 'adminLogin', 
+            //             email: adminEmail,
+            //             password: adminPassword
+            //         }),
+            //     });
                 
-                setAppMode('adminView');
-                adminEmailInput.value = '';
-                adminPasswordInput.value = '';
-                await fetchAllClientsForAdmin(); 
-                showMessage("Acceso de administrador exitoso."); 
+            //     setAppMode('adminView');
+            //     adminEmailInput.value = '';
+            //     adminPasswordInput.value = '';
+            //     await fetchAllClientsForAdmin(); 
+            //     showMessage("Acceso de administrador exitoso."); 
 
-            } catch (error) {
-                console.error("Error al enviar credenciales de administrador a Apps Script:", error);
-                showMessage(`Error de conexión al intentar acceder como administrador. Inténtalo de nuevo.`, true);
-            } finally {
-                // Ensure loading state is reset
-                // isAdminLoginLoading = false; // No longer needed
-                // adminLoginBtn.textContent = 'Acceder como Administrador'; // No longer needed
-                // adminLoginBtn.disabled = false; // No longer needed
-                // adminLoginBtn.classList.remove('bg-gray-300', 'text-gray-700', 'cursor-not-allowed'); // No longer needed
-                // adminLoginBtn.classList.add('bg-gray-700', 'text-white', 'hover:bg-gray-800'); // No longer needed
-            }
+            // } catch (error) {
+            //     console.error("Error al enviar credenciales de administrador a Apps Script:", error);
+            //     showMessage(`Error de conexión al intentar acceder como administrador. Inténtalo de nuevo.`, true);
+            // } finally {
+            // }
         };
 
         // Function to fetch all client data from Google Sheet (GET request)
