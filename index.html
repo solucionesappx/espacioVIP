@@ -243,7 +243,7 @@
             // Para que el mensaje permanezca, simplemente coméntala o elimínala.
             setTimeout(() => {
                  messageContainer.classList.add('hidden');
-            }, 1000); 
+             }, 3000); 
         };
 
         const setAppMode = (mode) => {
@@ -398,7 +398,7 @@
                 loginClientIdxInput.value = '';
 
             } else {
-                showMessage("Credenciales incorrectas o usuario no activo. Por favor, revisa tu correo y ID de Cliente.", true);
+                showMessage("Las credenciales suministradas son incorrectas o usuario no esta activo. Por favor, revisa tu correo y/o ID de Cliente.", true);
             }
         };
 
