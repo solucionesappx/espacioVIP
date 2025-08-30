@@ -6,6 +6,8 @@
     <title>Gestión de Clientes</title>
     <!-- Tailwind CSS CDN -->
     <script src="https://cdn.tailwindcss.com"></script>
+    <!-- Font Awesome CDN for icons -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.2/css/all.min.css" xintegrity="sha512-SnH5WK+bZxgPHs44uWIX+LLJAJ9/2PkPKZ5oZ2e/g6J6i+k7s/3qT9x8jS2y4y5J7Wp7Gf5+1jR6A+2z1aW6A==" crossorigin="anonymous" referrerpolicy="no-referrer" />
     <style>
         body {
             font-family: 'Inter', sans-serif;
@@ -56,7 +58,7 @@
 <body class="min-h-screen bg-gradient-to-br from-indigo-500 via-purple-500 to-pink-500 flex items-center justify-center p-4">
 
     <div id="app" class="bg-white p-8 rounded-xl shadow-2xl w-full max-w-md">
-        <h1 class="text-3xl font-bold text-center text-gray-800 mb-8">
+        <h1 class="text-4xl font-bold text-center text-gray-800 mb-8">
             Gestión de Clientes
         </h1>
 
@@ -66,16 +68,18 @@
         <div id="auth-view">
             <!-- User Login Form -->
             <div class="mb-8">
-                <h2 class="text-2xl font-semibold text-gray-700 mb-4 text-center">Iniciar Sesión (Usuario)</h2>
+                <h2 class="text-2xl font-semibold text-gray-700 mb-4 text-center">Validar Usuario y Suscripción</h2>
                 <form id="user-login-form" class="space-y-4">
                     <div>
-                        <input type="email" id="login-email" placeholder="Correo Electrónico" class="w-full p-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-indigo-500 focus:border-transparent" required>
+                        <label for="login-email" class="block text-sm font-medium text-gray-700 mb-1">Correo Electrónico</label>
+                        <input type="email" id="login-email" placeholder="Ej. xyz@example.com" class="w-full p-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-indigo-500 focus:border-transparent" required>
                     </div>
                     <div>
-                        <input type="text" id="login-client-idx" placeholder="ID Cliente (Cédula de Identidad)" class="w-full p-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-indigo-500 focus:border-transparent" required>
+                        <label for="login-client-idx" class="block text-sm font-medium text-gray-700 mb-1">Teléfono</label>
+                        <input type="text" id="login-client-idx" placeholder="Ej. 04241234567" class="w-full p-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-indigo-500 focus:border-transparent" required>
                     </div>
                     <button type="submit" id="user-login-btn" class="w-full py-3 px-6 bg-indigo-600 text-white font-semibold rounded-lg shadow-md hover:bg-indigo-700 transition duration-300 transform hover:scale-105 focus:outline-none focus:ring-2 focus:ring-indigo-500 focus:ring-opacity-75">
-                        Acceder
+                        Verificar
                     </button>
                 </form>
             </div>
@@ -84,34 +88,53 @@
         <!-- User View -->
         <div id="user-view" class="hidden flex-col items-center">
             <h2 class="text-2xl font-semibold text-gray-700 mb-4">Datos del Usuario</h2>
-            <div id="logged-in-user-data" class="bg-gray-100 p-6 rounded-lg w-full text-left mb-4">
-                <p class="text-gray-700 text-lg mb-2">
-                    <span class="font-medium">Correo:</span> <span id="user-display-email"></span>
-                </p>
-                <p class="text-gray-700 text-lg mb-2">
-                    <span class="font-medium">Nombre:</span> <span id="user-display-name"></span>
-                </p>
-                <p class="text-gray-700 text-lg mb-2">
-                    <span class="font-medium">Teléfono:</span> <span id="user-display-phone"></span>
-                </p>
-                <p class="text-gray-700 text-lg mb-2">
-                    <span class="font-medium">ID Suscripción:</span> <span id="user-display-id-sub"></span>
-                </p>
-                <p class="text-gray-700 text-lg mb-2">
-                    <span class="font-medium">Plan:</span> <span id="user-display-plan"></span>
-                </p>
-                <p class="text-gray-700 text-lg mb-2">
-                    <span class="font-medium">Válido desde:</span> <span id="user-display-ini"></span>
-                </p>
-                <p class="text-gray-700 text-lg mb-2">
-                    <span class="font-medium">Hasta el:</span> <span id="user-display-fin"></span>
-                </p>
-                <p class="text-gray-700 text-lg mb-2">
-                    <span class="font-medium">Estado Suscripción:</span> <span id="user-display-status"></span>
-                </p>
-                <p class="text-gray-700 text-lg">
-                    <span class="font-medium">Nota Suscripción:</span> <span id="user-display-nota"></span>
-                </p>
+            <div id="logged-in-user-data" class="bg-white p-8 rounded-xl shadow-lg border border-gray-200 w-full text-left mb-6 bg-gradient-to-br from-gray-100 to-gray-50">
+                <table class="w-full table-auto">
+                    <tbody>
+                        <tr>
+                            <td class="w-1/2 flex items-center space-x-2 text-gray-700 text-lg py-2">
+                                <i class="fa-solid fa-user fa-xl text-gray-500"></i>
+                                <span class="font-bold">Nombre:</span>
+                            </td>
+                            <td class="text-gray-700 text-lg py-2"><span id="user-display-name"></span></td>
+                        </tr>
+                        <tr>
+                            <td class="w-1/2 flex items-center space-x-2 text-gray-700 text-lg py-2">
+                                <i class="fa-solid fa-envelope fa-xl text-gray-500"></i>
+                                <span class="font-bold">Correo:</span>
+                            </td>
+                            <td class="text-gray-700 text-lg py-2"><span id="user-display-email"></span></td>
+                        </tr>
+                        <tr>
+                            <td class="w-1/2 flex items-center space-x-2 text-gray-700 text-lg py-2">
+                                <i class="fa-solid fa-phone fa-xl text-gray-500"></i>
+                                <span class="font-bold">Teléfono:</span>
+                            </td>
+                            <td class="text-gray-700 text-lg py-2"><span id="user-display-phone"></span></td>
+                        </tr>
+                        <tr>
+                            <td class="w-1/2 flex items-center space-x-2 text-gray-700 text-lg py-2">
+                                <i class="fa-solid fa-calendar-days fa-xl text-gray-500"></i>
+                                <span class="font-bold">Validez:</span>
+                            </td>
+                            <td class="text-gray-700 text-lg py-2"><span id="user-display-fin"></span></td>
+                        </tr>
+                        <tr>
+                            <td class="w-1/2 flex items-center space-x-2 text-gray-700 text-lg py-2">
+                                <i class="fa-solid fa-file-invoice fa-xl text-gray-500"></i>
+                                <span class="font-bold">Suscripción:</span>
+                            </td>
+                            <td class="text-gray-700 text-lg py-2"><span id="user-display-status"></span></td>
+                        </tr>
+                        <tr>
+                            <td class="w-1/2 flex items-center space-x-2 text-gray-700 text-lg py-2">
+                                <i class="fa-solid fa-sticky-note fa-xl text-gray-500"></i>
+                                <span class="font-bold">Nota:</span>
+                            </td>
+                            <td class="text-gray-700 text-lg py-2"><span id="user-display-nota"></span></td>
+                        </tr>
+                    </tbody>
+                </table>
             </div>
 
             <button id="user-logout-btn" class="mt-2 w-full py-3 px-6 bg-red-600 text-white font-semibold rounded-lg shadow-md hover:bg-red-700 transition duration-300 transform hover:scale-105 focus:outline-none focus:ring-2 focus:ring-red-500 focus:ring-opacity-75">
@@ -129,10 +152,7 @@
                     <table class="min-w-full divide-y divide-gray-200">
                         <thead class="bg-gray-50">
                             <tr>
-                                <th class="px-3 py-2 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
-                                      
-                                </th>
-                                <th class="px-3 py-2 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
+                                <th class="px-2 py-2 min-w-[120px] text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
                                     Nombre Usuario
                                 </th>
                                 <th class="px-3 py-2 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
@@ -150,7 +170,7 @@
                                 <th class="px-3 py-2 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
                                     Inicio Suscripción
                                 </th>
-                                <th class="px-3 py-2 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
+                                <th class="px-3 py-2 whitespace-nowrap text-xs font-medium text-gray-500 uppercase tracking-wider">
                                     Fin Suscripción
                                 </th>
                                 <th class="px-3 py-2 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
@@ -158,9 +178,6 @@
                                 </th>
                                 <th class="px-3 py-2 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
                                     Notas Suscripción
-                                </th>
-                                <th class="px-3 py-2 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
-                                    Condición
                                 </th>
                             </tr>
                         </thead>
@@ -172,9 +189,6 @@
                 <p id="no-clients-message" class="text-gray-600 text-center hidden">No hay clientes registrados.</p>
             </div>
             <div class="flex justify-center space-x-4 mt-6 w-full max-w-2xl">
-                <button type="button" id="mark-deleted-btn" class="py-3 px-6 rounded-lg shadow-md transition duration-300 transform hover:scale-105 focus:outline-none focus:ring-2 focus:ring-opacity-75 bg-red-300 text-gray-700 cursor-not-allowed" disabled>
-                    Seleccionar para Borrados (0)
-                </button>
                 <button type="button" id="admin-logout-btn" class="py-3 px-6 font-semibold rounded-lg shadow-md transition duration-300 transform hover:scale-105 focus:outline-none focus:ring-2 focus:ring-gray-400 focus:ring-opacity-75 bg-gray-500 text-white">
                     Cerrar Sesión (Admin)
                 </button>
@@ -195,19 +209,10 @@
         const loginClientIdxInput = document.getElementById('login-client-idx'); 
         const userLoginBtn = document.getElementById('user-login-btn'); 
 
-        // Admin login form elements (Removed from HTML, so these would be null)
-        // const adminLoginForm = document.getElementById('admin-login-form');
-        // const adminEmailInput = document.getElementById('admin-email');
-        // const adminPasswordInput = document.getElementById('admin-password');
-        // const adminLoginBtn = document.getElementById('admin-login-btn'); // New: Reference to the admin login button
-
         // User view display elements
         const userDisplayEmail = document.getElementById('user-display-email');
         const userDisplayName = document.getElementById('user-display-name');
         const userDisplayPhone = document.getElementById('user-display-phone'); 
-        const userDisplayIdSub = document.getElementById('user-display-id-sub');
-        const userDisplayPlan = document.getElementById('user-display-plan');
-        const userDisplayIni = document.getElementById('user-display-ini');
         const userDisplayFin = document.getElementById('user-display-fin');
         const userDisplayStatus = document.getElementById('user-display-status');
         const userDisplayNota = document.getElementById('user-display-nota');
@@ -219,28 +224,23 @@
         const adminClientsTableBody = document.getElementById('admin-clients-table-body');
         const adminClientsTableContainer = document.getElementById('admin-clients-table-container');
         const noClientsMessage = document.getElementById('no-clients-message');
-        const markDeletedBtn = document.getElementById('mark-deleted-btn');
         const adminLogoutBtn = document.getElementById('admin-logout-btn');
 
-        // !!! REEMPLAZA ESTA URL CON LA LA URL DE DESPLIEGUE DE TU APPS SCRIPT !!!
+        // !!! IMPORTANTE: REEMPLAZA ESTA URL CON LA URL DE DESPLIEGUE DE TU APPS SCRIPT !!!
         const appsScriptUrl = 'https://script.google.com/macros/s/AKfycbxyfhWoAzcN9Pf5VP3M39szabUhSvUJvJDEXKIliMSLQD-4QHsb9kFVerWcuAD77xjqJw/exec'; 
-
+        
         // --- State Variables ---
         let appMode = 'auth'; 
         let loggedInUser = null;
         let adminClients = []; 
-        let selectedClientIds = []; 
         let isAdminActionLoading = false;
         let isUserLoginLoading = false; 
-        // let isAdminLoginLoading = false; // Admin login functionality removed from UI
 
         // --- Helper Functions ---
         const showMessage = (msg, isError = false) => {
             messageContainer.textContent = msg;
             messageContainer.classList.remove('hidden', 'bg-blue-500', 'bg-red-500');
             messageContainer.classList.add(isError ? 'bg-red-500' : 'bg-blue-500');
-            // La siguiente línea es la que controla la desaparición automática.
-            // Para que el mensaje permanezca, simplemente coméntala o elimínala.
             setTimeout(() => {
                  messageContainer.classList.add('hidden');
              }, 3000); 
@@ -251,43 +251,21 @@
             authView.classList.add('hidden');
             userView.classList.add('hidden');
             adminView.classList.add('hidden');
+            
+            // Adjust container width based on view mode
+            document.getElementById('app').classList.remove('max-w-md', 'max-w-xl', 'max-w-4xl');
 
             if (appMode === 'auth') {
                 authView.classList.remove('hidden');
-                document.getElementById('app').classList.remove('max-w-4xl'); 
                 document.getElementById('app').classList.add('max-w-md');
             } else if (appMode === 'userView') {
                 userView.classList.remove('hidden');
-                userView.classList.add('flex'); 
-                document.getElementById('app').classList.remove('max-w-4xl');
-                document.getElementById('app').classList.add('max-w-md');
+                userView.classList.add('flex');
+                document.getElementById('app').classList.add('max-w-xl'); // Increased width for user view
             } else if (appMode === 'adminView') {
                 adminView.classList.remove('hidden');
                 adminView.classList.add('flex'); 
-                document.getElementById('app').classList.add('max-w-4xl'); 
-                document.getElementById('app').classList.remove('max-w-md');
-            }
-        };
-
-        const updateAdminButtonState = () => {
-            if (selectedClientIds.length === 0 || isAdminActionLoading) {
-                markDeletedBtn.disabled = true;
-                markDeletedBtn.classList.add('bg-red-300', 'text-gray-700', 'cursor-not-allowed');
-                markDeletedBtn.classList.remove('bg-red-600', 'text-white', 'hover:bg-red-700');
-            } else {
-                markDeletedBtn.disabled = false;
-                markDeletedBtn.classList.remove('bg-red-300', 'text-gray-700', 'cursor-not-allowed');
-                markDeletedBtn.classList.add('bg-red-600', 'text-white', 'hover:bg-red-700');
-            }
-            markDeletedBtn.textContent = isAdminActionLoading ? 'Procesando...' : `Seleccionar para Borrados (${selectedClientIds.length})`;
-
-            adminLogoutBtn.disabled = isAdminActionLoading;
-            if (isAdminActionLoading) {
-                adminLogoutBtn.classList.add('bg-gray-300', 'text-gray-700', 'cursor-not-allowed');
-                adminLogoutBtn.classList.remove('bg-gray-500', 'text-white', 'hover:bg-gray-600');
-            } else {
-                adminLogoutBtn.classList.remove('bg-gray-300', 'text-gray-700', 'cursor-not-allowed');
-                adminLogoutBtn.classList.add('bg-gray-500', 'text-white', 'hover:bg-gray-600');
+                document.getElementById('app').classList.add('max-w-4xl'); // Increased width for admin view
             }
         };
 
@@ -301,165 +279,125 @@
                 noClientsMessage.classList.add('hidden');
                 adminClients.forEach(client => {
                     const row = adminClientsTableBody.insertRow();
-                    if (client.CONDICION === false) {
-                        row.classList.add('inactive-client');
-                    }
                     row.innerHTML = `
-                        <td class="px-3 py-2 whitespace-nowrap">
-                            <input type="checkbox" data-client-id="${client.Cliente_IDX}" class="form-checkbox h-4 w-4 text-purple-600 transition duration-150 ease-in-out rounded-sm" ${selectedClientIds.includes(client.Cliente_IDX) ? 'checked' : ''}>
-                        </td>
-                        <td class="px-3 py-2 whitespace-nowrap text-sm text-gray-900">${client.Cliente_Nombre || ''}</td>
-                        <td class="px-3 py-2 whitespace-nowrap text-sm text-gray-900">${client.Cliente_Correo || ''}</td>
-                        <td class="px-3 py-2 whitespace-nowrap text-sm text-gray-900">${client.Suscripcion_ID || ''}</td>
+                        <td class="px-2 py-2 min-w-[120px] whitespace-nowrap text-sm text-gray-900">${client.Tabla_Cliente_Nombre || ''}</td>
+                        <td class="px-3 py-2 whitespace-nowrap text-sm text-gray-900">${client.Tabla_Cliente_Correo || ''}</td>
                         <td class="px-3 py-2 whitespace-nowrap text-sm text-gray-900">${client.Cliente_Telefono || ''}</td>
+                        <td class="px-3 py-2 whitespace-nowrap text-sm text-gray-900">${client.Suscripcion_ID || ''}</td>
                         <td class="px-3 py-2 whitespace-nowrap text-sm text-gray-900">${client.Suscripcion_Plan || ''}</td>
-                        <td class="px-3 py-2 whitespace-nowrap text-sm text-gray-900">${client.Suscripcion_Ini || ''}</td>
-                        <td class="px-3 py-2 whitespace-nowrap text-sm text-gray-900">${client.Suscripcion_Fin || ''}</td>
-                        <td class="px-3 py-2 whitespace-nowrap text-sm text-gray-900">${client.Suscripcion_Status || ''}</td>
+                        <td class="px-3 py-2 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
+                                    <span class="inline-flex items-center space-x-1">
+                                    ${client.Suscripcion_Ini || ''}
+                                    </span>
+                                </td>
+                        <td class="px-3 py-2 whitespace-nowrap text-sm text-gray-900">${client.Tabla_Fecha_Fin || ''}</td>
+                        <td class="px-3 py-2 whitespace-nowrap text-sm text-gray-900">${client.Tabla_Renovacion_Status || ''}</td>
                         <td class="px-3 py-2 whitespace-nowrap text-sm text-gray-900">${client.Suscripcion_Nota || ''}</td>
-                        <td class="px-3 py-2 whitespace-nowrap text-sm text-gray-900">${client.CONDICION ? 'Registrado' : 'Borrado'}</td>
                     `;
-                    row.querySelector('input[type="checkbox"]').addEventListener('change', (e) => {
-                        handleClientSelection(client.Cliente_IDX, e.target.checked);
-                    });
                 });
             }
-            updateAdminButtonState(); 
         };
-
 
         // --- Event Handlers ---
         
         const handleLogin = async (e) => {
             e.preventDefault();
-            if (!loginEmailInput.value || !loginClientIdxInput.value) {
-                showMessage("Por favor, introduce tu correo y ID de Cliente para iniciar sesión.", true);
+            // Convertir a minúsculas antes de enviar
+            const email = loginEmailInput.value.toLowerCase();
+            const phone = loginClientIdxInput.value.toLowerCase();
+
+            if (!email || !phone) {
+                showMessage("Por favor, introduce tu correo y teléfono para iniciar sesión.", true);
                 return;
             }
 
-            // Show loading state for the button
+            // Muestra los datos que se van a enviar
+            console.log("Datos a enviar:", { email: email, phone: phone });
+
             isUserLoginLoading = true;
             userLoginBtn.textContent = 'Procesando...';
             userLoginBtn.disabled = true;
 
-            let clients;
             try {
-                const response = await fetch(appsScriptUrl + '?action=getAllClients');
+                const response = await fetch(appsScriptUrl, {
+                    method: 'POST',
+                    body: JSON.stringify({ action: 'login', email: email, phone: phone }),
+                });
                 const result = await response.json();
 
                 if (result.success === false) {
-                    showMessage(`Error al cargar datos para iniciar sesión: ${result.error}`, true);
+                    showMessage(result.error, true);
                     return;
                 }
-                clients = result;
-            } catch (error) {
-                console.error("Error al cargar clientes para iniciar sesión desde Apps Script:", error);
-                showMessage(`Error al conectar con el servidor para iniciar sesión: ${error.message}`, true);
-                return;
-            } finally {
-                // Ensure loading state is reset even if there's an error
-                isUserLoginLoading = false;
-                userLoginBtn.textContent = 'Acceder';
-                userLoginBtn.disabled = false;
-            }
-            
-            const foundUser = clients.find(client =>
-                client.Cliente_Correo === loginEmailInput.value && 
-                String(client.Cliente_IDX) === String(loginClientIdxInput.value) && 
-                client.CONDICION === true
-            );
+                
+                if (result.role === 'admin') {
+                    setAppMode('adminView');
+                    await fetchAllClientsForAdmin(); 
+                    showMessage("Acceso de administrador exitoso.");
+                } else if (result.role === 'user') {
+                    loggedInUser = result;
+                    setAppMode('userView');
+                    
+                    // Formatear la fecha
+                    const rawDate = loggedInUser.Tabla_Fecha_Fin;
+                    const dateObj = new Date(rawDate);
+                    const day = String(dateObj.getDate()).padStart(2, '0');
+                    const month = String(dateObj.getMonth() + 1).padStart(2, '0');
+                    const year = dateObj.getFullYear();
+                    const formattedDate = `${day}/${month}/${year}`;
 
-            if (foundUser) {
-                loggedInUser = {
-                    email: foundUser.Cliente_Correo,
-                    name: foundUser.Cliente_Nombre,
-                    phone: foundUser.Cliente_Telefono,
-                    id_number: foundUser.Suscripcion_ID, 
-                    plan: foundUser.Suscripcion_Plan,
-                    ini: foundUser.Suscripcion_Ini,
-                    fin: foundUser.Suscripcion_Fin,
-                    status: foundUser.Suscripcion_Status,
-                    nota: foundUser.Suscripcion_Nota,
-                };
-                setAppMode('userView');
-                // Removed the welcome message
-                // showMessage(`¡Bienvenido, ${loggedInUser.name}!`); 
-                userDisplayEmail.textContent = loggedInUser.email;
-                userDisplayName.textContent = loggedInUser.name;
-                userDisplayPhone.textContent = loggedInUser.phone;
-                userDisplayIdSub.textContent = loggedInUser.id_number; 
-                userDisplayPlan.textContent = loggedInUser.plan;
-                userDisplayIni.textContent = loggedInUser.ini;
-                userDisplayFin.textContent = loggedInUser.fin;
-                userDisplayStatus.textContent = loggedInUser.status;
-                userDisplayNota.textContent = loggedInUser.nota;
+                    userDisplayEmail.textContent = loggedInUser.Tabla_Cliente_Correo;
+                    userDisplayName.textContent = loggedInUser.Tabla_Cliente_Nombre;
+                    userDisplayPhone.textContent = loggedInUser.Cliente_Telefono;
+                    userDisplayFin.textContent = formattedDate;
+
+                    // Lógica para determinar el estado de la suscripción
+                    let subscriptionStatus;
+                    if (!loggedInUser.Tabla_Renovacion_Status || loggedInUser.Tabla_Renovacion_Status.trim() === '') {
+                        subscriptionStatus = 'ACTIVA';
+                    } else {
+                        subscriptionStatus = 'VENCIDA';
+                    }
+                    userDisplayStatus.textContent = subscriptionStatus;
+
+                    // Nueva lógica para Nota Suscripción
+                    let subscriptionNote = loggedInUser.Suscripcion_Nota;
+                    const currentDate = new Date();
+                    const subscriptionEndDate = new Date(loggedInUser.Tabla_Fecha_Fin);
+                    
+                    // Comprobar si la fecha de fin es menor que la fecha actual Y el estado de renovación está vacío
+                    if ((!loggedInUser.Tabla_Renovacion_Status || loggedInUser.Tabla_Renovacion_Status.trim() === '') && subscriptionEndDate < currentDate) {
+                        subscriptionNote = 'EN REVISIÓN';
+                    }
+                    userDisplayNota.textContent = subscriptionNote;
+                } else {
+                    showMessage("Credenciales incorrectas o usuario inactivo.", true);
+                }
 
                 loginEmailInput.value = '';
                 loginClientIdxInput.value = '';
 
-            } else {
-                showMessage("Las credenciales suministradas son incorrectas o usuario no esta activo. Por favor, revisa tu correo y/o ID de Cliente.", true);
+            } catch (error) {
+                console.error("Error al conectar con el servidor:", error);
+                showMessage(`Error al conectar con el servidor: ${error.message}`, true);
+            } finally {
+                isUserLoginLoading = false;
+                userLoginBtn.textContent = 'Verificar';
+                userLoginBtn.disabled = false;
             }
         };
 
         const handleLogout = () => {
             loggedInUser = null;
             setAppMode('auth');
-            // showMessage("Has cerrado sesión.");
+            showMessage("Has cerrado sesión.");
         };
 
-        // handleAdminLogin is kept for potential future use, but not directly called from UI
-        const handleAdminLogin = async (e) => {
-            e.preventDefault();
-            // adminEmailInput y adminPasswordInput ya no existen en el HTML
-            // Si esta función es llamada, significaría que la lógica de admin
-            // se ha eliminado del HTML pero la llamada a esta función no.
-            // Para evitar errores, podemos simplemente mostrar un mensaje o redirigir.
-            showMessage("La funcionalidad de inicio de sesión de administrador ha sido deshabilitada.", true);
-            return;
-
-            // const adminEmail = adminEmailInput.value;
-            // const adminPassword = adminPasswordInput.value;
-
-            // if (!adminEmail || !adminPassword) {
-            //     showMessage("Por favor, introduce el correo y la contraseña del administrador.", true);
-            //     return;
-            // }
-
-            // try {
-            //     const response = await fetch(appsScriptUrl, {
-            //         method: 'POST',
-            //         mode: 'no-cors', 
-            //         headers: {
-            //             'Content-Type': 'application/json',
-            //         },
-            //         body: JSON.stringify({
-            //             action: 'adminLogin', 
-            //             email: adminEmail,
-            //             password: adminPassword
-            //         }),
-            //     });
-                
-            //     setAppMode('adminView');
-            //     adminEmailInput.value = '';
-            //     adminPasswordInput.value = '';
-            //     await fetchAllClientsForAdmin(); 
-            //     showMessage("Acceso de administrador exitoso."); 
-
-            // } catch (error) {
-            //     console.error("Error al enviar credenciales de administrador a Apps Script:", error);
-            //     showMessage(`Error de conexión al intentar acceder como administrador. Inténtalo de nuevo.`, true);
-            // } finally {
-            // }
-        };
-
-        // Function to fetch all client data from Google Sheet (GET request)
         const fetchAllClientsForAdmin = async () => {
             isAdminActionLoading = true;
             adminLoadingMessage.classList.remove('hidden');
             adminClientsTableContainer.classList.add('hidden'); 
             noClientsMessage.classList.add('hidden'); 
-            updateAdminButtonState();
 
             try {
                 const response = await fetch(appsScriptUrl + '?action=getAllClients'); 
@@ -479,71 +417,11 @@
                 isAdminActionLoading = false;
                 adminLoadingMessage.classList.add('hidden'); 
                 renderAdminClients(); 
-                updateAdminButtonState();
-            }
-        };
-
-        const handleClientSelection = (clientId, isChecked) => {
-            if (isChecked) {
-                selectedClientIds.push(clientId);
-            } else {
-                selectedClientIds = selectedClientIds.filter(id => id !== clientId);
-            }
-            updateAdminButtonState();
-        };
-
-        // Marks selected clients as logically deleted (CONDICION: false) and updates Google Sheet
-        const handleMarkClientsAsDeleted = async () => {
-            if (selectedClientIds.length === 0) {
-                showMessage("Selecciona al menos un cliente para marcar como borrado.", true);
-                return;
-            }
-
-            isAdminActionLoading = true;
-            showMessage("Marcando clientes seleccionados como borrados...");
-            updateAdminButtonState();
-
-            try {
-                const clientIdsToMarkDeleted = [...selectedClientIds]; 
-                
-                selectedClientIds = []; 
-                updateAdminButtonState(); 
-
-                const updatePromises = clientIdsToMarkDeleted.map(clientId => {
-                    const clientToUpdate = adminClients.find(c => c.Cliente_IDX === clientId);
-
-                    if (clientToUpdate) {
-                        return fetch(appsScriptUrl, {
-                            method: 'POST',
-                            mode: 'no-cors', 
-                            headers: {
-                                'Content-Type': 'application/json',
-                            },
-                            body: JSON.stringify({
-                                id: clientToUpdate.Cliente_IDX, 
-                                CONDICION: false 
-                            }),
-                        });
-                    }
-                    return Promise.resolve(); 
-                });
-                await Promise.all(updatePromises);
-
-                await fetchAllClientsForAdmin(); 
-                showMessage("Clientes seleccionados marcados como borrados en Google Sheet y lista actualizada.");
-                
-            } catch (error) {
-                console.error("Error marking selected clients as deleted:", error);
-                showMessage(`Error al marcar clientes como borrados en Google Sheet: ${error.message}`, true);
-            } finally {
-                isAdminActionLoading = false;
-                updateAdminButtonState();
             }
         };
 
         const handleAdminLogout = () => {
             adminClients = []; 
-            selectedClientIds = [];
             setAppMode('auth');
             showMessage("Sesión de administrador cerrada.");
         };
@@ -552,9 +430,7 @@
         window.onload = () => {
             setAppMode('auth'); 
             userLoginForm.addEventListener('submit', handleLogin);
-            // adminLoginForm.addEventListener('submit', handleAdminLogin); // REMOVED: Admin login form no longer exists in HTML
             userLogoutBtn.addEventListener('click', handleLogout);
-            markDeletedBtn.addEventListener('click', handleMarkClientsAsDeleted);
             adminLogoutBtn.addEventListener('click', handleAdminLogout);
         };
     </script>
