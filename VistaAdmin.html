@@ -75,7 +75,7 @@
             Salir
         </button>
 
-        <h1 class="text-3xl font-bold mb-6 text-center text-gray-800">Contenido de la Tabla de Google Sheets</h1>
+        <h1 class="text-3xl font-bold mt-10 mb-6 text-center text-gray-800">Contenido de la Tabla de Google Sheets</h1>
         
         <div class="mb-4">
             <label for="search-input" class="block text-sm font-medium text-gray-700 mb-1">
@@ -200,7 +200,7 @@
                 displayData.sort((a, b) => {
                     const nameA = a.Tabla_Cliente_Nombre.toLowerCase();
                     const nameB = b.Tabla_Cliente_Nombre.toLowerCase();
-                    return isNameAscending ? nameA.localeCompare(nameB) : nameB.localeCompare(nameA);
+                    return isNameAscending ? nameA.localeCompare(nameB) : nameB.localeCompare(a);
                 });
 
                 isNameAscending = !isNameAscending;
