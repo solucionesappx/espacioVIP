@@ -122,7 +122,7 @@
                         <tr>
                             <td class="w-1/2 flex items-center space-x-2 text-gray-700 text-lg py-2">
                                 <i class="fa-solid fa-file-invoice fa-xl text-gray-500"></i>
-                                <span class="font-bold">Suscripción:</span>
+                                <span class="font-bold">Suscripción: </span> 
                             </td>
                             <td class="text-gray-700 text-lg py-2"><span id="user-display-status"></span></td>
                         </tr>
@@ -197,6 +197,13 @@
     </div>
 
     <script>
+        // --- ADVERTENCIA: CREDENCIALES DE ADMINISTRADOR PARA DEMOSTRACIÓN ---
+        // Estas credenciales están codificadas para fines de demostración.
+        // NO UTILIZAR ESTE CÓDIGO EN UN ENTORNO DE PRODUCCIÓN REAL.
+        // En un entorno real, la autenticación debe gestionarse a través de un servicio seguro.
+        const ADMIN_EMAIL = 'admin@vip.com';
+        const ADMIN_PHONE = 'cela1969';
+
         // DOM Elements
         const messageContainer = document.getElementById('message-container');
         const authView = document.getElementById('auth-view');
@@ -308,6 +315,14 @@
 
             if (!email || !phone) {
                 showMessage("Por favor, introduce tu correo y teléfono para iniciar sesión.", true);
+                return;
+            }
+
+            // Verificar si las credenciales son las del administrador
+            if (email === ADMIN_EMAIL && phone === ADMIN_PHONE) {
+                setAppMode('adminView');
+                await fetchAllClientsForAdmin();
+                showMessage("Acceso de administrador exitoso.");
                 return;
             }
 
