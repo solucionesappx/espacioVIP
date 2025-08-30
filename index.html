@@ -8,6 +8,10 @@
     <script src="https://cdn.tailwindcss.com"></script>
     <!-- Font Awesome CDN for icons -->
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.2/css/all.min.css" xintegrity="sha512-SnH5WK+bZxgPHs44uWIX+LLJAJ9/2PkPKZ5oZ2e/g6J6i+k7s/3qT9x8jS2y4y5J7Wp7Gf5+1jR6A+2z1aW6A==" crossorigin="anonymous" referrerpolicy="no-referrer" />
+    
+    <!-- DataTables CSS -->
+    <link rel="stylesheet" type="text/css" href="https://cdn.datatables.net/1.11.5/css/jquery.dataTables.css">
+    
     <style>
         body {
             font-family: 'Inter', sans-serif;
@@ -52,6 +56,11 @@
             color: #b91c1c; /* dark red */
             opacity: 0.7;
             text-decoration: line-through;
+        }
+        
+        /* Custom styles for DataTables */
+        #admin-clients-datatable_wrapper {
+            @apply mt-6;
         }
     </style>
 </head>
@@ -149,44 +158,40 @@
                 <h3 class="text-xl font-semibold text-gray-700 mb-4">Clientes Registrados</h3>
                 <p id="admin-loading-message" class="text-gray-600 text-center py-8 hidden">Cargando datos o procesando acción...</p>
                 <div id="admin-clients-table-container">
-                    <table class="min-w-full divide-y divide-gray-200">
+                    <table id="admin-clients-datatable" class="min-w-full divide-y divide-gray-200">
                         <thead class="bg-gray-50">
                             <tr>
-                                <th class="px-2 py-2 min-w-[120px] text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
-                                    Nombre Usuario
-                                </th>
-                                <th class="px-3 py-2 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
+                                <th class="px-2 py-2 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
                                     Correo
                                 </th>
                                 <th class="px-3 py-2 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
                                     Teléfono
                                 </th>
                                 <th class="px-3 py-2 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
-                                    ID Suscripción
+                                    Nombre
                                 </th>
                                 <th class="px-3 py-2 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
-                                    Plan Suscripción
+                                    C.I.
                                 </th>
                                 <th class="px-3 py-2 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
-                                    Inicio Suscripción
-                                </th>
-                                <th class="px-3 py-2 whitespace-nowrap text-xs font-medium text-gray-500 uppercase tracking-wider">
-                                    Fin Suscripción
+                                    Referidos
                                 </th>
                                 <th class="px-3 py-2 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
-                                    Estado Suscripción
+                                    Estado
                                 </th>
                                 <th class="px-3 py-2 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
-                                    Notas Suscripción
+                                    Duración
+                                </th>
+                                <th class="px-3 py-2 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
+                                    Fecha Fin
+                                </th>
+                                <th class="px-3 py-2 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
+                                    Observación
                                 </th>
                             </tr>
                         </thead>
-                        <tbody id="admin-clients-table-body" class="bg-white divide-y divide-gray-200">
-                            <!-- Client rows will be inserted here by JavaScript -->
-                        </tbody>
                     </table>
                 </div>
-                <p id="no-clients-message" class="text-gray-600 text-center hidden">No hay clientes registrados.</p>
             </div>
             <div class="flex justify-center space-x-4 mt-6 w-full max-w-2xl">
                 <button type="button" id="admin-logout-btn" class="py-3 px-6 font-semibold rounded-lg shadow-md transition duration-300 transform hover:scale-105 focus:outline-none focus:ring-2 focus:ring-gray-400 focus:ring-opacity-75 bg-gray-500 text-white">
@@ -196,11 +201,13 @@
         </div>
     </div>
 
+    <!-- jQuery for DataTables -->
+    <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+    <!-- DataTables JS -->
+    <script type="text/javascript" charset="utf8" src="https://cdn.datatables.net/1.11.5/js/jquery.dataTables.js"></script>
+    
     <script>
         // --- ADVERTENCIA: CREDENCIALES DE ADMINISTRADOR PARA DEMOSTRACIÓN ---
-        // Estas credenciales están codificadas para fines de demostración.
-        // NO UTILIZAR ESTE CÓDIGO EN UN ENTORNO DE PRODUCCIÓN REAL.
-        // En un entorno real, la autenticación debe gestionarse a través de un servicio seguro.
         const ADMIN_EMAIL = 'admin@vip.com';
         const ADMIN_PHONE = 'cela1969';
 
@@ -228,9 +235,7 @@
 
         // Admin view elements
         const adminLoadingMessage = document.getElementById('admin-loading-message');
-        const adminClientsTableBody = document.getElementById('admin-clients-table-body');
         const adminClientsTableContainer = document.getElementById('admin-clients-table-container');
-        const noClientsMessage = document.getElementById('no-clients-message');
         const adminLogoutBtn = document.getElementById('admin-logout-btn');
 
         // !!! IMPORTANTE: REEMPLAZA ESTA URL CON LA URL DE DESPLIEGUE DE TU APPS SCRIPT !!!
@@ -242,6 +247,7 @@
         let adminClients = []; 
         let isAdminActionLoading = false;
         let isUserLoginLoading = false; 
+        let dataTable;
 
         // --- Helper Functions ---
         const showMessage = (msg, isError = false) => {
@@ -268,40 +274,11 @@
             } else if (appMode === 'userView') {
                 userView.classList.remove('hidden');
                 userView.classList.add('flex');
-                document.getElementById('app').classList.add('max-w-xl'); // Increased width for user view
+                document.getElementById('app').classList.add('max-w-xl');
             } else if (appMode === 'adminView') {
                 adminView.classList.remove('hidden');
                 adminView.classList.add('flex'); 
-                document.getElementById('app').classList.add('max-w-4xl'); // Increased width for admin view
-            }
-        };
-
-        const renderAdminClients = () => {
-            adminClientsTableBody.innerHTML = ''; 
-            if (adminClients.length === 0) {
-                adminClientsTableContainer.classList.add('hidden');
-                noClientsMessage.classList.remove('hidden');
-            } else {
-                adminClientsTableContainer.classList.remove('hidden');
-                noClientsMessage.classList.add('hidden');
-                adminClients.forEach(client => {
-                    const row = adminClientsTableBody.insertRow();
-                    row.innerHTML = `
-                        <td class="px-2 py-2 min-w-[120px] whitespace-nowrap text-sm text-gray-900">${client.Tabla_Cliente_Nombre || ''}</td>
-                        <td class="px-3 py-2 whitespace-nowrap text-sm text-gray-900">${client.Tabla_Cliente_Correo || ''}</td>
-                        <td class="px-3 py-2 whitespace-nowrap text-sm text-gray-900">${client.Cliente_Telefono || ''}</td>
-                        <td class="px-3 py-2 whitespace-nowrap text-sm text-gray-900">${client.Suscripcion_ID || ''}</td>
-                        <td class="px-3 py-2 whitespace-nowrap text-sm text-gray-900">${client.Suscripcion_Plan || ''}</td>
-                        <td class="px-3 py-2 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
-                                    <span class="inline-flex items-center space-x-1">
-                                    ${client.Suscripcion_Ini || ''}
-                                    </span>
-                                </td>
-                        <td class="px-3 py-2 whitespace-nowrap text-sm text-gray-900">${client.Tabla_Fecha_Fin || ''}</td>
-                        <td class="px-3 py-2 whitespace-nowrap text-sm text-gray-900">${client.Tabla_Renovacion_Status || ''}</td>
-                        <td class="px-3 py-2 whitespace-nowrap text-sm text-gray-900">${client.Suscripcion_Nota || ''}</td>
-                    `;
-                });
+                document.getElementById('app').classList.add('max-w-4xl');
             }
         };
 
@@ -309,7 +286,6 @@
         
         const handleLogin = async (e) => {
             e.preventDefault();
-            // Convertir a minúsculas antes de enviar
             const email = loginEmailInput.value.toLowerCase();
             const phone = loginClientIdxInput.value.toLowerCase();
 
@@ -318,7 +294,7 @@
                 return;
             }
 
-            // Verificar si las credenciales son las del administrador
+            // Check for hardcoded admin credentials first
             if (email === ADMIN_EMAIL && phone === ADMIN_PHONE) {
                 setAppMode('adminView');
                 await fetchAllClientsForAdmin();
@@ -326,7 +302,6 @@
                 return;
             }
 
-            // Muestra los datos que se van a enviar
             console.log("Datos a enviar:", { email: email, phone: phone });
 
             isUserLoginLoading = true;
@@ -353,7 +328,6 @@
                     loggedInUser = result;
                     setAppMode('userView');
                     
-                    // Formatear la fecha
                     const rawDate = loggedInUser.Tabla_Fecha_Fin;
                     const dateObj = new Date(rawDate);
                     const day = String(dateObj.getDate()).padStart(2, '0');
@@ -366,7 +340,6 @@
                     userDisplayPhone.textContent = loggedInUser.Cliente_Telefono;
                     userDisplayFin.textContent = formattedDate;
 
-                    // Lógica para determinar el estado de la suscripción
                     let subscriptionStatus;
                     if (!loggedInUser.Tabla_Renovacion_Status || loggedInUser.Tabla_Renovacion_Status.trim() === '') {
                         subscriptionStatus = 'ACTIVA';
@@ -375,12 +348,10 @@
                     }
                     userDisplayStatus.textContent = subscriptionStatus;
 
-                    // Nueva lógica para Nota Suscripción
                     let subscriptionNote = loggedInUser.Suscripcion_Nota;
                     const currentDate = new Date();
                     const subscriptionEndDate = new Date(loggedInUser.Tabla_Fecha_Fin);
                     
-                    // Comprobar si la fecha de fin es menor que la fecha actual Y el estado de renovación está vacío
                     if ((!loggedInUser.Tabla_Renovacion_Status || loggedInUser.Tabla_Renovacion_Status.trim() === '') && subscriptionEndDate < currentDate) {
                         subscriptionNote = 'EN REVISIÓN';
                     }
@@ -411,8 +382,12 @@
         const fetchAllClientsForAdmin = async () => {
             isAdminActionLoading = true;
             adminLoadingMessage.classList.remove('hidden');
-            adminClientsTableContainer.classList.add('hidden'); 
-            noClientsMessage.classList.add('hidden'); 
+            adminClientsTableContainer.classList.add('hidden');
+            
+            // Si ya existe una instancia de DataTable, la destruimos para crear una nueva
+            if ($.fn.DataTable.isDataTable('#admin-clients-datatable')) {
+                $('#admin-clients-datatable').DataTable().destroy();
+            }
 
             try {
                 const response = await fetch(appsScriptUrl + '?action=getAllClients'); 
@@ -422,7 +397,7 @@
                     showMessage(`Error del Apps Script al cargar clientes: ${result.error}`, true);
                     adminClients = []; 
                 } else {
-                    adminClients = result; 
+                    adminClients = result;
                 }
             } catch (error) {
                 console.error("Error fetching clients from Apps Script:", error);
@@ -431,12 +406,40 @@
             } finally {
                 isAdminActionLoading = false;
                 adminLoadingMessage.classList.add('hidden'); 
-                renderAdminClients(); 
+                adminClientsTableContainer.classList.remove('hidden');
+
+                // Inicializamos la tabla con los datos
+                dataTable = $('#admin-clients-datatable').DataTable({
+                    data: adminClients,
+                    columns: [
+                        { data: 'Login_Correo', title: 'Correo' },
+                        { data: 'Login_Telefono', title: 'Teléfono' },
+                        { data: 'Tabla_Cliente_Nombre', title: 'Nombre' },
+                        { data: 'Tabla_Cliente_CI', title: 'C.I.' },
+                        { data: 'Tabla_Referidos', title: 'Referidos' },
+                        { data: 'Tabla_Renovacion_Status', title: 'Estado' },
+                        { data: 'Tabla_Plan_Duracion', title: 'Duración' },
+                        { data: 'Tabla_Fecha_Fin', title: 'Fecha Fin' },
+                        { data: 'Tabla_Observacion', title: 'Observación' }
+                    ],
+                    // Opciones de DataTables para mejorar la experiencia
+                    paging: true,
+                    searching: true,
+                    info: true,
+                    responsive: true,
+                    language: {
+                        url: '//cdn.datatables.net/plug-ins/1.11.5/i18n/es-ES.json'
+                    }
+                });
             }
         };
 
         const handleAdminLogout = () => {
             adminClients = []; 
+            if (dataTable) {
+                dataTable.destroy();
+                dataTable = null;
+            }
             setAppMode('auth');
             showMessage("Sesión de administrador cerrada.");
         };
