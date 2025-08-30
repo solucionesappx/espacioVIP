@@ -55,56 +55,63 @@
         <div id="user-view" class="hidden flex-col items-center">
             <h2 class="text-2xl font-semibold text-gray-700 mb-4">Datos del Usuario</h2>
             <div id="logged-in-user-data" class="bg-white p-8 rounded-xl shadow-lg border border-gray-200 w-full text-left mb-6 bg-gradient-to-br from-gray-100 to-gray-50">
-                <table class="w-full table-auto">
+                <table class="w-full">
                     <tbody>
                         <tr>
-                            <td class="w-1/2 flex items-center space-x-2 text-gray-700 text-lg py-2">
+                            <td class="pr-2 text-right">
                                 <i class="fa-solid fa-user fa-xl text-gray-500"></i>
-                                <span class="font-bold">Nombre:</span>
                             </td>
-                            <td class="text-gray-700 text-lg py-2"><span id="user-display-name"></span></td>
+                            <td class="text-gray-700 text-lg py-2 pl-2">
+                                <span id="user-display-name"></span>
+                            </td>
                         </tr>
                         <tr>
-                            <td class="w-1/2 flex items-center space-x-2 text-gray-700 text-lg py-2">
+                            <td class="pr-2 text-right">
                                 <i class="fa-solid fa-envelope fa-xl text-gray-500"></i>
-                                <span class="font-bold">Correo:</span>
                             </td>
-                            <td class="text-gray-700 text-lg py-2"><span id="user-display-email"></span></td>
+                            <td class="text-gray-700 text-lg py-2 pl-2">
+                                <span id="user-display-email"></span>
+                            </td>
                         </tr>
                         <tr>
-                            <td class="w-1/2 flex items-center space-x-2 text-gray-700 text-lg py-2">
+                            <td class="pr-2 text-right">
                                 <i class="fa-solid fa-phone fa-xl text-gray-500"></i>
-                                <span class="font-bold">Teléfono:</span>
                             </td>
-                            <td class="text-gray-700 text-lg py-2"><span id="user-display-phone"></span></td>
+                            <td class="text-gray-700 text-lg py-2 pl-2">
+                                <span id="user-display-phone"></span>
+                            </td>
                         </tr>
                         <tr>
-                            <td class="w-1/2 flex items-center space-x-2 text-gray-700 text-lg py-2">
+                            <td class="pr-2 text-right">
                                 <i class="fa-solid fa-calendar-days fa-xl text-gray-500"></i>
-                                <span class="font-bold">Validez:</span>
                             </td>
-                            <td class="text-gray-700 text-lg py-2"><span id="user-display-fin"></span></td>
+                            <td class="text-gray-700 text-lg py-2 pl-2">
+                                <span id="user-display-fin"></span>
+                            </td>
                         </tr>
                         <tr>
-                            <td class="w-1/2 flex items-center space-x-2 text-gray-700 text-lg py-2">
+                            <td class="pr-2 text-right">
                                 <i class="fa-solid fa-file-invoice fa-xl text-gray-500"></i>
-                                <span class="font-bold">Suscripción: </span> 
                             </td>
-                            <td class="text-gray-700 text-lg py-2"><span id="user-display-status"></span></td>
+                            <td class="text-gray-700 text-lg py-2 pl-2">
+                                <span id="user-display-status"></span>
+                            </td>
                         </tr>
                         <tr>
-                            <td class="w-1/2 flex items-center space-x-2 text-gray-700 text-lg py-2">
+                            <td class="pr-2 text-right">
                                 <i class="fa-solid fa-sticky-note fa-xl text-gray-500"></i>
-                                <span class="font-bold">Nota:</span>
                             </td>
-                            <td class="text-gray-700 text-lg py-2"><span id="user-display-nota"></span></td>
+                            <td class="text-gray-700 text-lg py-2 pl-2">
+                                <span id="user-display-nota"></span>
+                            </td>
                         </tr>
                     </tbody>
                 </table>
             </div>
 
             <button id="user-logout-btn" class="mt-2 w-full py-3 px-6 bg-red-600 text-white font-semibold rounded-lg shadow-md hover:bg-red-700 transition duration-300 transform hover:scale-105 focus:outline-none focus:ring-2 focus:ring-red-500 focus:ring-opacity-75">
-                Cerrar Sesión
+                <i class="fa-solid fa-right-from-bracket mr-2"></i>
+                Salir
             </button>
         </div>
     </div>
