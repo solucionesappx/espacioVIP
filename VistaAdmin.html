@@ -4,7 +4,7 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Visualizador de Hoja de Cálculo</title>
-    <!-- Tailwind CSS para estilos  -->
+    <!-- Tailwind CSS para estilos -->
     <script src="https://cdn.tailwindcss.com"></script>
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.2/css/all.min.css" xintegrity="sha512-SnH5WK+bZxgPHs44uWIX+LLJAJ9/2PkPKZ5oZ2e/g6J6i+k7s/3qT9x8jS2y4y5J7Wp7Gf5+1jR6A+2z1aW6A==" crossorigin="anonymous" referrerpolicy="no-referrer" />
     <style>
@@ -85,18 +85,18 @@
                    class="w-full p-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-indigo-500 focus:border-transparent">
         </div>
 
-        <div id="pagination-controls" class="flex justify-center mt-4 mb-4 space-x-2">
-            <button id="sort-correlative-btn" class="bg-indigo-600 text-white font-semibold py-2 px-4 rounded-lg shadow-md hover:bg-indigo-700 transition duration-300">
-                Ordenar por Correlativo
+        <div id="pagination-controls" class="flex flex-wrap justify-center mt-4 mb-4 gap-2">
+            <button id="sort-correlative-btn" class="bg-indigo-600 text-white font-semibold py-2 px-4 rounded-lg shadow-md hover:bg-indigo-700 transition duration-300" title="Ordenar por Correlativo">
+                <i class="fa-solid fa-arrow-down-wide-short"></i>
             </button>
-            <button id="sort-name-btn" class="bg-indigo-600 text-white font-semibold py-2 px-4 rounded-lg shadow-md hover:bg-indigo-700 transition duration-300">
-                Ordenar por Nombre
+            <button id="sort-name-btn" class="bg-indigo-600 text-white font-semibold py-2 px-4 rounded-lg shadow-md hover:bg-indigo-700 transition duration-300" title="Ordenar por Nombre">
+                <i class="fa-solid fa-sort-alpha-down"></i>
             </button>
-            <button id="sort-date-btn" class="bg-indigo-600 text-white font-semibold py-2 px-4 rounded-lg shadow-md hover:bg-indigo-700 transition duration-300">
-                Ordenar por Fecha de Fin
+            <button id="sort-date-btn" class="bg-indigo-600 text-white font-semibold py-2 px-4 rounded-lg shadow-md hover:bg-indigo-700 transition duration-300" title="Ordenar por Fecha (Descendente)">
+                <i class="fa-solid fa-calendar-alt"></i>
             </button>
-            <button id="load-more-btn" class="bg-green-600 text-white font-semibold py-2 px-4 rounded-lg shadow-md hover:bg-green-700 transition duration-300">
-                +50 registros
+            <button id="load-more-btn" class="bg-green-600 text-white font-semibold py-2 px-4 rounded-lg shadow-md hover:bg-green-700 transition duration-300" title="Cargar +50 registros">
+                <i class="fa-solid fa-plus"></i> 50
             </button>
         </div>
 
@@ -204,8 +204,8 @@
                 });
 
                 isNameAscending = !isNameAscending;
-                sortNameBtn.textContent = isNameAscending ? 'Ordenar por Nombre (Ascendente)' : 'Ordenar por Nombre (Descendente)';
-
+                // No se cambia el texto del botón, se mantiene el título
+                
                 clearAndRender();
             };
 
@@ -217,8 +217,8 @@
                 }
 
                 isCorrelativeAscending = !isCorrelativeAscending;
-                sortCorrelativeBtn.textContent = isCorrelativeAscending ? 'Ordenar por Correlativo (Ascendente)' : 'Ordenar por Correlativo (Descendente)';
-
+                // No se cambia el texto del botón, se mantiene el título
+                
                 clearAndRender();
             };
 
@@ -228,8 +228,8 @@
                     const dateB = new Date(b.Tabla_Fecha_Fin);
                     return dateB - dateA;
                 });
-                sortDateBtn.textContent = 'Ordenar por Fecha de Fin (Descendente)';
-
+                // No se cambia el texto del botón, se mantiene el título
+                
                 clearAndRender();
             };
 
