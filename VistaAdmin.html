@@ -6,6 +6,7 @@
     <title>Visualizador de Hoja de Cálculo</title>
     <!-- Tailwind CSS para estilos -->
     <script src="https://cdn.tailwindcss.com"></script>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.2/css/all.min.css" xintegrity="sha512-SnH5WK+bZxgPHs44uWIX+LLJAJ9/2PkPKZ5oZ2e/g6J6i+k7s/3qT9x8jS2y4y5J7Wp7Gf5+1jR6A+2z1aW6A==" crossorigin="anonymous" referrerpolicy="no-referrer" />
     <style>
         .table-container {
             overflow-x: auto;
@@ -66,7 +67,14 @@
 </head>
 <body class="bg-gray-100 p-8 flex items-center justify-center min-h-screen">
 
-    <div class="bg-white p-8 rounded-xl shadow-lg w-full max-w-5xl">
+    <div class="bg-white p-8 rounded-xl shadow-lg w-full max-w-5xl relative">
+        <button onclick="window.location.href='./index.html'" 
+            class="absolute top-4 right-4 py-2 px-4 border-2 border-red-500 rounded-lg text-red-500 bg-white hover:bg-red-50 transition duration-300 transform hover:scale-105"
+            title="Salir y volver a la pantalla de inicio de sesión">
+            <i class="fa-solid fa-right-from-bracket mr-2"></i>
+            Salir
+        </button>
+
         <h1 class="text-3xl font-bold mb-6 text-center text-gray-800">Contenido de la Tabla de Google Sheets</h1>
         
         <div class="mb-4">
@@ -75,6 +83,21 @@
             </label>
             <input type="text" id="search-input" placeholder="Escribe para buscar..." 
                    class="w-full p-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-indigo-500 focus:border-transparent">
+        </div>
+
+        <div id="pagination-controls" class="flex justify-center mt-4 mb-4 space-x-2">
+            <button id="sort-correlative-btn" class="bg-indigo-600 text-white font-semibold py-2 px-4 rounded-lg shadow-md hover:bg-indigo-700 transition duration-300">
+                Ordenar por Correlativo
+            </button>
+            <button id="sort-name-btn" class="bg-indigo-600 text-white font-semibold py-2 px-4 rounded-lg shadow-md hover:bg-indigo-700 transition duration-300">
+                Ordenar por Nombre
+            </button>
+            <button id="sort-date-btn" class="bg-indigo-600 text-white font-semibold py-2 px-4 rounded-lg shadow-md hover:bg-indigo-700 transition duration-300">
+                Ordenar por Fecha de Fin
+            </button>
+            <button id="load-more-btn" class="bg-green-600 text-white font-semibold py-2 px-4 rounded-lg shadow-md hover:bg-green-700 transition duration-300">
+                +50 registros
+            </button>
         </div>
 
         <div class="mb-6 table-container">
@@ -91,20 +114,6 @@
         </div>
 
         <div id="error-message" class="hidden text-center text-red-500 mt-4"></div>
-        <div id="pagination-controls" class="flex justify-center mt-4 hidden">
-            <button id="sort-correlative-btn" class="bg-indigo-600 text-white font-semibold py-2 px-4 rounded-lg shadow-md hover:bg-indigo-700 transition duration-300 mr-2">
-                Ordenar por Correlativo
-            </button>
-            <button id="sort-name-btn" class="bg-indigo-600 text-white font-semibold py-2 px-4 rounded-lg shadow-md hover:bg-indigo-700 transition duration-300 mr-2">
-                Ordenar por Nombre
-            </button>
-            <button id="sort-date-btn" class="bg-indigo-600 text-white font-semibold py-2 px-4 rounded-lg shadow-md hover:bg-indigo-700 transition duration-300 mr-2">
-                Ordenar por Fecha de Fin
-            </button>
-            <button id="load-more-btn" class="bg-green-600 text-white font-semibold py-2 px-4 rounded-lg shadow-md hover:bg-green-700 transition duration-300">
-                +50 registros
-            </button>
-        </div>
     </div>
 
     <script>
