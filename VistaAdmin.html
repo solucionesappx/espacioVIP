@@ -1,0 +1,326 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Visualizador de Hoja de Cálculo</title>
+    <!-- Tailwind CSS para estilos -->
+    <script src="https://cdn.tailwindcss.com"></script>
+    <style>
+        .table-container {
+            overflow-x: auto;
+            overflow-y: auto;
+            max-height: 70vh; /* Altura máxima para la barra de desplazamiento vertical */
+        }
+        table {
+            border-collapse: collapse;
+            table-layout: auto; /* Ajusta el ancho de la columna al contenido */
+        }
+        th, td {
+            border: 1px solid #e2e8f0;
+            padding: 6px; /* Padding ajustado para mejor legibilidad */
+            text-align: left;
+        }
+        thead tr {
+            background-color: #f1f5f9;
+            position: sticky;
+            z-index: 10;
+        }
+        thead tr:first-child {
+            top: 0;
+        }
+        thead tr:last-child {
+            top: 35px; /* Ajuste para que la segunda fila quede debajo de la primera */
+        }
+        tbody tr:nth-child(even) {
+            background-color: #f8fafc;
+        }
+        tbody tr:hover {
+            background-color: #f1f5f9;
+        }
+        .w-custom-name {
+            width: 250px;
+            white-space: nowrap;
+            overflow: hidden;
+            text-overflow: ellipsis;
+        }
+        /* Estilos para la columna fija */
+        th:first-child, td:first-child {
+            position: sticky;
+            left: 0;
+            z-index: 20;
+            background-color: #f8fafc;
+            min-width: 50px;
+            text-align: center;
+        }
+        /* Estilo para la fila seleccionada y su hover */
+        tr.highlighted-row,
+        tr.highlighted-row:hover {
+            background-color: #a2b0e6; /* Un azul más fuerte */
+            transition: background-color 0.3s ease;
+        }
+        tr.highlighted-row td:first-child {
+            background-color: #a2b0e6;
+        }
+    </style>
+</head>
+<body class="bg-gray-100 p-8 flex items-center justify-center min-h-screen">
+
+    <div class="bg-white p-8 rounded-xl shadow-lg w-full max-w-5xl">
+        <h1 class="text-3xl font-bold mb-6 text-center text-gray-800">Contenido de la Tabla de Google Sheets</h1>
+        
+        <div class="mb-4">
+            <label for="search-input" class="block text-sm font-medium text-gray-700 mb-1">
+                Buscar en Correo, Teléfono o Nombre
+            </label>
+            <input type="text" id="search-input" placeholder="Escribe para buscar..." 
+                   class="w-full p-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-indigo-500 focus:border-transparent">
+        </div>
+
+        <div class="mb-6 table-container">
+            <div id="loading-message" class="text-center text-gray-500">Cargando datos...</div>
+            <table id="data-table" class="hidden">
+                <thead>
+                    <tr id="table-header-row1"></tr>
+                    <tr id="table-header-row2"></tr>
+                </thead>
+                <tbody>
+                    <!-- Los datos se insertarán aquí -->
+                </tbody>
+            </table>
+        </div>
+
+        <div id="error-message" class="hidden text-center text-red-500 mt-4"></div>
+        <div id="pagination-controls" class="flex justify-center mt-4 hidden">
+            <button id="sort-correlative-btn" class="bg-indigo-600 text-white font-semibold py-2 px-4 rounded-lg shadow-md hover:bg-indigo-700 transition duration-300 mr-2">
+                Ordenar por Correlativo
+            </button>
+            <button id="sort-name-btn" class="bg-indigo-600 text-white font-semibold py-2 px-4 rounded-lg shadow-md hover:bg-indigo-700 transition duration-300 mr-2">
+                Ordenar por Nombre
+            </button>
+            <button id="sort-date-btn" class="bg-indigo-600 text-white font-semibold py-2 px-4 rounded-lg shadow-md hover:bg-indigo-700 transition duration-300 mr-2">
+                Ordenar por Fecha de Fin
+            </button>
+            <button id="load-more-btn" class="bg-green-600 text-white font-semibold py-2 px-4 rounded-lg shadow-md hover:bg-green-700 transition duration-300">
+                +50 registros
+            </button>
+        </div>
+    </div>
+
+    <script>
+        document.addEventListener('DOMContentLoaded', () => {
+            const GAS_API_URL = 'https://script.google.com/macros/s/AKfycbz_t7lJWGsxONdw5K_b4KnH8yHIYSWCFUJBK8cqDKLX-o6gLPp4U6JIWn_nKpc4PiUvyg/exec';
+            const table = document.getElementById('data-table');
+            const tableHeaderRow1 = document.getElementById('table-header-row1');
+            const tableHeaderRow2 = document.getElementById('table-header-row2');
+            const tableBody = table.querySelector('tbody');
+            const loadingMessage = document.getElementById('loading-message');
+            const errorMessage = document.getElementById('error-message');
+            const loadMoreBtn = document.getElementById('load-more-btn');
+            const sortNameBtn = document.getElementById('sort-name-btn');
+            const sortCorrelativeBtn = document.getElementById('sort-correlative-btn');
+            const sortDateBtn = document.getElementById('sort-date-btn');
+            const paginationControls = document.getElementById('pagination-controls');
+            const searchInput = document.getElementById('search-input');
+
+            let originalData = [];
+            let displayData = [];
+            let currentIndex = 0;
+            const recordsPerLoad = 50;
+            let headers = [];
+            let isNameAscending = true;
+            let isCorrelativeAscending = true;
+            const DESIRED_HEADERS = [
+                "Cliente_Nota", 
+                "Login_Correo", 
+                "Login_Telefono", 
+                "Tabla_Cliente_Nombre", 
+                "Tabla_Referidos", 
+                "Tabla_Renovacion_Status", 
+                "Tabla_Fecha_Fin", 
+                "Tabla_Observacion"
+            ];
+
+            const clearAndRender = () => {
+                tableBody.innerHTML = '';
+                currentIndex = 0;
+                renderData();
+            };
+
+            const renderData = () => {
+                const dataToRender = displayData.slice(currentIndex, currentIndex + recordsPerLoad);
+                
+                dataToRender.forEach((row, index) => {
+                    const tr = document.createElement('tr');
+                    
+                    const correlativeTd = document.createElement('td');
+                    correlativeTd.textContent = currentIndex + index + 1;
+                    tr.appendChild(correlativeTd);
+
+                    headers.forEach(header => {
+                        const td = document.createElement('td');
+                        const cellValue = row[header] || '';
+
+                        if (header === "Tabla_Cliente_Nombre") {
+                            td.textContent = cellValue;
+                            td.classList.add('w-custom-name');
+                        } else if (header === "Tabla_Fecha_Fin" && cellValue) {
+                            const dateObj = new Date(cellValue);
+                            const day = String(dateObj.getDate()).padStart(2, '0');
+                            const month = String(dateObj.getMonth() + 1).padStart(2, '0');
+                            const year = dateObj.getFullYear();
+                            td.textContent = `${day}/${month}/${year}`;
+                        } else {
+                            td.textContent = cellValue;
+                        }
+                        tr.appendChild(td);
+                    });
+                    tableBody.appendChild(tr);
+                });
+
+                currentIndex += recordsPerLoad;
+
+                if (currentIndex >= displayData.length) {
+                    loadMoreBtn.classList.add('hidden');
+                } else {
+                    loadMoreBtn.classList.remove('hidden');
+                }
+            };
+            
+            const sortByName = () => {
+                displayData.sort((a, b) => {
+                    const nameA = a.Tabla_Cliente_Nombre.toLowerCase();
+                    const nameB = b.Tabla_Cliente_Nombre.toLowerCase();
+                    return isNameAscending ? nameA.localeCompare(nameB) : nameB.localeCompare(nameA);
+                });
+
+                isNameAscending = !isNameAscending;
+                sortNameBtn.textContent = isNameAscending ? 'Ordenar por Nombre (Ascendente)' : 'Ordenar por Nombre (Descendente)';
+
+                clearAndRender();
+            };
+
+            const sortByCorrelative = () => {
+                if (isCorrelativeAscending) {
+                    displayData.sort((a, b) => originalData.indexOf(a) - originalData.indexOf(b));
+                } else {
+                    displayData.sort((a, b) => originalData.indexOf(b) - originalData.indexOf(a));
+                }
+
+                isCorrelativeAscending = !isCorrelativeAscending;
+                sortCorrelativeBtn.textContent = isCorrelativeAscending ? 'Ordenar por Correlativo (Ascendente)' : 'Ordenar por Correlativo (Descendente)';
+
+                clearAndRender();
+            };
+
+            const sortByDate = () => {
+                displayData.sort((a, b) => {
+                    const dateA = new Date(a.Tabla_Fecha_Fin);
+                    const dateB = new Date(b.Tabla_Fecha_Fin);
+                    return dateB - dateA;
+                });
+                sortDateBtn.textContent = 'Ordenar por Fecha de Fin (Descendente)';
+
+                clearAndRender();
+            };
+
+            const filterData = () => {
+                const searchTerm = searchInput.value.toLowerCase().trim();
+                
+                if (searchTerm === '') {
+                    displayData = [...originalData];
+                } else {
+                    displayData = originalData.filter(row => {
+                        return (row.Login_Correo && String(row.Login_Correo).toLowerCase().includes(searchTerm)) ||
+                               (row.Login_Telefono && String(row.Login_Telefono).toLowerCase().includes(searchTerm)) ||
+                               (row.Tabla_Cliente_Nombre && String(row.Tabla_Cliente_Nombre).toLowerCase().includes(searchTerm));
+                    });
+                }
+                clearAndRender();
+            };
+
+            loadMoreBtn.addEventListener('click', renderData);
+            sortNameBtn.addEventListener('click', sortByName);
+            sortCorrelativeBtn.addEventListener('click', sortByCorrelative);
+            sortDateBtn.addEventListener('click', sortByDate);
+            searchInput.addEventListener('input', filterData);
+
+            // Listener para seleccionar fila
+            tableBody.addEventListener('click', (e) => {
+                // Encuentra la fila (<tr>) más cercana al elemento clickeado (<td>)
+                const clickedRow = e.target.closest('tr');
+                if (clickedRow) {
+                    // Remueve la clase de resaltado de cualquier otra fila
+                    const currentHighlighted = tableBody.querySelector('.highlighted-row');
+                    if (currentHighlighted) {
+                        currentHighlighted.classList.remove('highlighted-row');
+                    }
+                    // Agrega la clase de resaltado a la fila clickeada
+                    clickedRow.classList.add('highlighted-row');
+                }
+            });
+
+
+            fetch(GAS_API_URL)
+                .then(response => {
+                    if (!response.ok) {
+                        throw new Error('Error en la respuesta del servidor');
+                    }
+                    return response.json();
+                })
+                .then(data => {
+                    loadingMessage.classList.add('hidden');
+                    
+                    if (data && data.headers && data.data) {
+                        headers = data.headers.filter(header => DESIRED_HEADERS.includes(header));
+                        
+                        const thCorrelative = document.createElement('th');
+                        thCorrelative.textContent = "Correlativo";
+                        tableHeaderRow1.appendChild(thCorrelative);
+
+                        headers.forEach(header => {
+                            const th = document.createElement('th');
+                            th.textContent = header;
+                            if (header === "Tabla_Cliente_Nombre") {
+                                th.classList.add('w-custom-name');
+                            }
+                            tableHeaderRow1.appendChild(th);
+                        });
+
+                        const secondHeaderData = data.data[0];
+                        if (secondHeaderData) {
+                            const thCorrelative2 = document.createElement('th');
+                            thCorrelative2.textContent = "#";
+                            tableHeaderRow2.appendChild(thCorrelative2);
+
+                            headers.forEach(header => {
+                                const th = document.createElement('th');
+                                th.textContent = secondHeaderData[header] || '';
+                                tableHeaderRow2.appendChild(th);
+                            });
+                            originalData = data.data.slice(1);
+                        } else {
+                            originalData = data.data;
+                        }
+
+                        displayData = [...originalData];
+                        renderData();
+                        table.classList.remove('hidden');
+                        paginationControls.classList.remove('hidden');
+
+                    } else {
+                        errorMessage.textContent = 'Datos recibidos en un formato incorrecto.';
+                        errorMessage.classList.remove('hidden');
+                    }
+                })
+                .catch(error => {
+                    loadingMessage.classList.add('hidden');
+                    errorMessage.textContent = `Error al cargar los datos: ${error.message}`;
+                    errorMessage.classList.remove('hidden');
+                    console.error('Error:', error);
+                });
+        });
+    </script>
+
+</body>
+</html>
