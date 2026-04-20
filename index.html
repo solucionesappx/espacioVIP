@@ -21,20 +21,38 @@
             box-shadow: 0 25px 50px -12px rgba(0, 0, 0, 0.25);
         }
     </style>
+    <style>
+        @keyframes bounceIn {
+            0% { opacity: 0; transform: translate(-50%, 20px); }
+            50% { opacity: 1; transform: translate(-50%, -5px); }
+            100% { opacity: 1; transform: translate(-50%, 0); }
+        }
+        .animate-bounce-in {
+            animation: bounceIn 0.5s ease-out forwards;
+        }
+    </style>
+
 </head>
+
 <body class="min-h-screen bg-gradient-to-br from-indigo-500 via-purple-500 to-pink-500 flex items-center justify-center p-4">
 
-    <div id="app" class="bg-white p-8 rounded-xl shadow-2xl w-full max-w-md">
-        <h1 class="text-4xl font-bold text-center text-gray-800 mb-8">
-            Gestión de Clientes
-        </h1>
+    <div id="app" class="bg-white p-8 rounded-xl shadow-2xl w-full max-w-md relative transition-all duration-300">
+        
+        <button id="user-logout-btn" class="absolute top-2 right-4 text-gray-400 text-gray-400 hover:text-red-500 transition duration-300 focus:outline-none z-10">
+            <i class="fa-solid fa-circle-xmark text-3xl"></i>
+        </button>
+
+        <div class="mb-6 pt-2">
+            <h1 class="text-4xl font-bold text-center text-gray-800">
+                Gestión de Clientes
+            </h1>
+        </div>
 
         <div id="message-container" class="mb-4 p-3 text-sm text-center text-white bg-blue-500 rounded-md hidden"></div>
         
-        <!-- User Login Form -->
-        <div id="auth-view">
+        <div id="auth-view" class="relative">
             <div class="mb-8">
-                <h2 class="text-2xl font-semibold text-gray-700 mb-4 text-center">Validar Usuario y Suscripción</h2>
+                <h2 class="text-[16px] font-semibold text-gray-700 mb-4 text-center">Validar Usuario y Suscripción</h2>
                 <form id="user-login-form" class="space-y-4">
                     <div>
                         <label for="login-email" class="block text-sm font-medium text-gray-700 mb-1">Correo Electrónico</label>
@@ -45,16 +63,15 @@
                         <input type="text" id="login-client-idx" placeholder="Ej. 04241234567" class="w-full p-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-indigo-500 focus:border-transparent" required>
                     </div>
                     <button type="submit" id="user-login-btn" class="w-full py-3 px-6 bg-indigo-600 text-white font-semibold rounded-lg shadow-md hover:bg-indigo-700 transition duration-300 transform hover:scale-105 focus:outline-none focus:ring-2 focus:ring-indigo-500 focus:ring-opacity-75">
-                        Verificar
+                        Procesar
                     </button>
                 </form>
             </div>
         </div>
 
-        <!-- User View -->
         <div id="user-view" class="hidden flex-col items-center">
             <h2 class="text-2xl font-semibold text-gray-700 mb-4">Datos del Usuario</h2>
-            <div id="logged-in-user-data" class="bg-white p-8 rounded-xl shadow-lg border border-gray-200 w-full text-left mb-6 bg-gradient-to-br from-gray-100 to-gray-50">
+            <div id="logged-in-user-data" class="bg-white px-8 py-4 rounded-xl shadow-lg border border-gray-200 w-full text-left mb-6 bg-gradient-to-br from-gray-100 to-gray-50">
                 <table class="w-full">
                     <tbody>
                         <tr>
@@ -98,10 +115,10 @@
                             </td>
                         </tr>
                         <tr>
-                            <td class="pr-2 text-right">
+                            <td class="pr-2 pt-2 text-right">
                                 <i class="fa-solid fa-sticky-note fa-xl text-gray-500"></i>
                             </td>
-                            <td class="text-gray-700 text-lg py-2 pl-2">
+                            <td class="text-gray-700 text-lg pl-2">
                                 <span id="user-display-nota"></span>
                             </td>
                         </tr>
@@ -109,17 +126,18 @@
                 </table>
             </div>
 
-            <button id="user-logout-btn" class="mt-2 w-full py-3 px-6 bg-red-600 text-white font-semibold rounded-lg shadow-md hover:bg-red-700 transition duration-300 transform hover:scale-105 focus:outline-none focus:ring-2 focus:ring-red-500 focus:ring-opacity-75">
-                <i class="fa-solid fa-right-from-bracket mr-2"></i>
-                Salir
-            </button>
+            <a href="https://espaciovipgerenciaytributos.blogspot.com/p/renovacion-de-tu-suscripcion-al-espacio.html" 
+               target="_blank" 
+               class="w-4/5 py-3 px-6 bg-blue-500 text-white font-semibold rounded-lg shadow-md hover:bg-blue-600 transition duration-300 transform hover:scale-105 flex items-center justify-center decoration-none">
+                <i class="fa-solid fa-arrows-rotate mr-2"></i>
+                Renovar Suscripción
+            </a>
         </div>
     </div>
-    
+</body>
+
     <script>
         // --- ADVERTENCIA: CREDENCIALES DE ADMINISTRADOR PARA DEMOSTRACIÓN ---
-        const ADMIN_EMAIL = 'admin@vip.com';
-        const ADMIN_PHONE = 'cela1969';
 
         // DOM Elements
         const messageContainer = document.getElementById('message-container');
@@ -143,7 +161,7 @@
         const userLogoutBtn = document.getElementById('user-logout-btn');
         
         // !!! IMPORTANTE: REEMPLAZA ESTA URL CON LA URL DE DESPLIEGUE DE TU APPS SCRIPT !!!
-        const appsScriptUrl = 'https://script.google.com/macros/s/AKfycbxyfhWoAzcN9Pf5VP3M39szabUhSvUJvJDEXKIliMSLQD-4QHsb9kFVerWcuAD77xjqJw/exec'; 
+        const appsScriptUrl = 'https://script.google.com/macros/s/AKfycbyMR-awXi14sm5xbCDMbVJL---U-XZFuwfc4DZOwdP7hSoCjdzidY4mYwaN0G1n-gx4Rg/exec'; 
         
         // --- State Variables ---
         let appMode = 'auth'; 
@@ -165,15 +183,21 @@
             authView.classList.add('hidden');
             userView.classList.add('hidden');
             
-            document.getElementById('app').classList.remove('max-w-md', 'max-w-xl');
+            // Control de visibilidad del icono X en el header
+            const logoutBtn = document.getElementById('user-logout-btn');
+            
+            const appContainer = document.getElementById('app');
+            appContainer.classList.remove('max-w-md', 'max-w-xl');
 
             if (appMode === 'auth') {
                 authView.classList.remove('hidden');
-                document.getElementById('app').classList.add('max-w-md');
+                logoutBtn.classList.add('hidden'); // Oculto en login
+                appContainer.classList.add('max-w-md');
             } else if (appMode === 'userView') {
                 userView.classList.remove('hidden');
                 userView.classList.add('flex');
-                document.getElementById('app').classList.add('max-w-xl');
+                logoutBtn.classList.remove('hidden'); // Visible en perfil
+                appContainer.classList.add('max-w-xl');
             }
         };
 
@@ -184,12 +208,6 @@
             const email = loginEmailInput.value.toLowerCase();
             const phone = loginClientIdxInput.value.toLowerCase();
 
-            // Verificar credenciales de administrador
-            if (email === ADMIN_EMAIL && phone === ADMIN_PHONE) {
-                window.location.href = './VistaAdmin.html';
-                return; // Detener la ejecución del resto de la función
-            }
-
             if (!email || !phone) {
                 showMessage("Por favor, introduce tu correo y teléfono para iniciar sesión.", true);
                 return;
@@ -198,14 +216,35 @@
             console.log("Datos a enviar:", { email: email, phone: phone });
 
             isUserLoginLoading = true;
-            userLoginBtn.textContent = 'Procesando...';
+            userLoginBtn.innerHTML = `
+                <i class="fa-solid fa-circle-notch fa-spin mr-2"></i>
+                Validando datos...
+            `;
             userLoginBtn.disabled = true;
 
             try {
+                // Definimos el objeto con la acción y credenciales
+                const payload = { 
+                    action: 'login', 
+                    email: email, 
+                    phone: phone 
+                };
+
                 const response = await fetch(appsScriptUrl, {
                     method: 'POST',
-                    body: JSON.stringify({ action: 'login', email: email, phone: phone }),
+                    mode: 'cors', // Aseguramos el modo cors
+                    cache: 'no-cache',
+                    headers: {
+                        // Enviamos como text/plain para evitar el preflight OPTIONS que GAS no soporta
+                        'Content-Type': 'text/plain;charset=utf-8',
+                    },
+                    body: JSON.stringify(payload),
                 });
+
+                if (!response.ok) {
+                    throw new Error(`Error en el servidor: ${response.statusText}`);
+                }
+
                 const result = await response.json();
 
                 if (result.success === false) {
@@ -251,9 +290,10 @@
             } catch (error) {
                 console.error("Error al conectar con el servidor:", error);
                 showMessage(`Error al conectar con el servidor: ${error.message}`, true);
+
             } finally {
                 isUserLoginLoading = false;
-                userLoginBtn.textContent = 'Verificar';
+                userLoginBtn.innerHTML = 'Procesar';
                 userLoginBtn.disabled = false;
             }
         };
@@ -261,7 +301,34 @@
         const handleLogout = () => {
             loggedInUser = null;
             setAppMode('auth');
-            showMessage("Has cerrado sesión.");
+            
+            // En lugar de showMessage, disparamos el modal de confirmación
+            showLogoutModal();
+        };
+
+        const showLogoutModal = () => {
+            const authView = document.getElementById('auth-view');
+            
+            // 1. Crear el elemento del modal
+            const modal = document.createElement('div');
+            
+            // Clases ajustadas: absolute en lugar de fixed, y centrado con top-1/2
+            modal.className = "absolute top-1/2 left-1/2 transform -translate-x-1/2 -translate-y-1/2 bg-gray-300 backdrop-blur-md text-gray-800/80 px-6 py-4 rounded-xl shadow-2xl flex flex-col items-center justify-center space-y-2 z-50 animate-fade-in w-3/4 text-center";
+            
+            // 2. Contenido del modal
+            modal.innerHTML = `
+                <i class="fa-solid fa-circle-check text-green-500 text-3xl"></i>
+                <span class="font-semibold text-sm">Sesión cerrada</span>
+            `;
+            
+            // 3. Agregarlo específicamente al auth-view
+            authView.appendChild(modal);
+            
+            // 4. Eliminarlo automáticamente
+            setTimeout(() => {
+                modal.classList.add('opacity-0', 'transition-opacity', 'duration-500');
+                setTimeout(() => modal.remove(), 500);
+            }, 1000);
         };
 
         // --- Initial Setup and Event Listeners ---
@@ -271,5 +338,5 @@
             userLogoutBtn.addEventListener('click', handleLogout);
         };
     </script>
-</body>
+
 </html>
