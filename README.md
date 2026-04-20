@@ -1,5 +1,3 @@
-ADMIN_EMAIL = 'admin@vip.com';
-ADMIN_PHONE = 'cel*1969';
 base: Gs1tEwKdocAyURwjPBaCL4r5wiVT5fJMOO42ABrFBc6gpQ_jal
 trabajo: Gs1amIGElsyLMqm9zz5rYsel_3LJGmLtKoqGF0pf3-i03g_ylo
 interfaz: Gs11pyusAce35bC35h8BER2jnXA7IMeZ6VUtkxw4XwSNVI_isl
