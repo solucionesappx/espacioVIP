@@ -1,0 +1,455 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Gestión de Suscriptores</title>
+    <!-- Tailwind CSS CDN -->
+    <script src="https://cdn.tailwindcss.com"></script>
+    <!-- Font Awesome CDN for icons -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.2/css/all.min.css" xintegrity="sha512-SnH5WK+bZxgPHs44uWIX+LLJAJ9/2PkPKZ5oZ2e/g6J6i+k7s/3qT9x8jS2y4y5J7Wp7Gf5+1jR6A+2z1aW6A==" crossorigin="anonymous" referrerpolicy="no-referrer" />
+    
+<style>
+        @import url('https://fonts.googleapis.com/css2?family=Inter:wght=100..900&display=swap');
+        html { font-family: 'Inter', sans-serif; -webkit-tap-highlight-color: transparent; }
+        
+        /* VARIABLES DE DISEÑO COHESIVAS (MODO OSCURO BLINDADO) */
+        :root { --bg: #1f2937; --txt: #f3f4f6; --surf: #374151; --p-soft: #60a5fa; --border: #4b5563; }
+        
+        /* FONDO BASE UNIFICADO EN MODO OSCURO EXTRA ESTRICTO */
+        html, body { background-color: #1f2937 !important; color: var(--txt); min-height: 100vh; }
+        
+        /* CONTENEDOR PRINCIPAL ESTILO MODAL CORPORATIVO */
+        .app-card { background: var(--surf); border: 2px solid var(--border); border-radius: 1rem; box-shadow: 0 25px 50px -12px rgba(0, 0, 0, 0.5); }
+        
+        /* INPUTS AJUSTADOS AL GROSOR ENHANCED DE 2PX */
+        .input-form-login { margin-top: 0.25rem; display: block; width: 100%; padding: 0.75rem 1rem; background-color: var(--bg); border: 2px solid var(--border); border-radius: 0.5rem; color: white; outline: none; transition: border-color .3s, box-shadow .3s; }
+        .input-form-login:focus { border-color: #3b82f6; box-shadow: 0 0 0 1px rgba(59,130,246,0.2); }
+        .input-form-login::placeholder { color: #9ca3af; opacity: 0.6; }
+
+        /* ANIMACIONES */
+        @keyframes bounceIn {
+            0% { opacity: 0; transform: translate(-50%, 20px); }
+            50% { opacity: 1; transform: translate(-50%, -5px); }
+            100% { opacity: 1; transform: translate(-50%, 0); }
+        }
+        .animate-bounce-in { animation: bounceIn 0.5s ease-out forwards; }
+        @keyframes fadeIn {
+            from { opacity: 0; transform: translate(-50%, -40%); }
+            to { opacity: 1; transform: translate(-50%, -50%); }
+        }
+        .animate-fade-in { animation: fadeIn 0.4s ease-out forwards; }
+    </style>  
+</head>
+
+<body class="min-h-screen flex items-center justify-center p-4">
+
+    <div id="app" class="app-card px-5 py-6 w-full max-w-[440px] relative transition-all duration-300">        
+        <button id="user-logout-btn" class="absolute top-2 right-3 text-gray-400 hover:text-red-400 transition duration-300 focus:outline-none z-10">
+            <i class="fa-solid fa-circle-xmark text-3xl"></i> 
+        </button>
+        <div class="mb-4 pt-3">
+            <h1 class="text-3xl font-bold text-center text-white">
+                Gestión de Suscriptores
+            </h1>
+        </div>
+        <div id="message-container" class="mb-4 p-3 text-sm text-center text-white bg-blue-600 rounded-lg hidden"></div>
+       
+        <div id="auth-view" class="relative">
+            <div class="mb-4">
+                <h2 class="text-[16px] font-semibold text-gray-300 mb-6 text-center">Validar Usuario y Suscripción</h2>
+                <form id="user-login-form" class="space-y-4">
+                    <div>
+                        <label for="login-email" class="block text-sm font-medium text-white mb-1">Correo Electrónico</label>
+                        <input type="email" id="login-email" placeholder="Ej. xyz@example.com" class="input-form-login" required>
+                    </div>
+                    <div>
+                        <label for="login-client-idx" class="block text-sm font-medium text-white mb-1">Teléfono</label>
+                        <input type="text" id="login-client-idx" placeholder="Ej. 04241234567" class="input-form-login" required>
+                    </div>
+                    <button type="submit" id="user-login-btn" class="w-full mt-2 py-3 px-6 bg-blue-600 text-white font-semibold rounded-lg shadow-md hover:bg-blue-700 transition duration-300 transform hover:scale-105 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:ring-opacity-75">
+                        Procesar
+                    </button>
+                </form>
+                <div class="text-center mt-6">
+                    <a href="Form GYTVIP.html" id="signup-user-link" target="_blank" class="text-sm font-semibold hover:underline transition-colors duration-200" style="color: var(--p-soft);">
+                        ¿No tienes usuario? Regístrate aquí
+                    </a>
+                </div>
+            </div>
+        </div>
+
+        <div id="user-view" class="hidden flex-col items-center">
+            <h2 class="text-2xl font-semibold text-white mb-4">Datos del Usuario</h2>
+            <div id="logged-in-user-data" class="px-5 py-4 rounded-xl border-2 border-gray-600 w-full text-left mb-6" style="background-color: var(--bg);">
+                <table class="w-full">
+                    <tbody>
+                        <tr>
+                            <td class="pr-3 text-right w-10">
+                                <i class="fa-solid fa-user fa-lg text-gray-400"></i>
+                            </td>
+                            <td class="text-white text-base py-2 pl-2 font-medium">
+                                <span id="user-display-name"></span>
+                            </td>
+                        </tr>
+                        <tr>
+                            <td class="pr-3 text-right">
+                                <i class="fa-solid fa-envelope fa-lg text-gray-400"></i>
+                            </td>
+                            <td class="text-white text-base py-2 pl-2">
+                                <span id="user-display-email"></span>
+                            </td>
+                        </tr>
+                        <tr>
+                            <td class="pr-3 text-right">
+                                <i class="fa-solid fa-phone fa-lg text-gray-400"></i>
+                            </td>
+                            <td class="text-white text-base py-2 pl-2">
+                                <span id="user-display-phone"></span>
+                            </td>
+                        </tr>
+                        <tr>
+                            <td class="pr-3 text-right">
+                                <i class="fa-solid fa-calendar-days fa-lg text-gray-400"></i>
+                            </td>
+                            <td class="text-white text-base py-2 pl-2">
+                                <span id="user-display-fin"></span>
+                            </td>
+                        </tr>
+                        <tr>
+                            <td class="pr-3 text-right">
+                                <i class="fa-solid fa-file-invoice fa-lg text-gray-400"></i>
+                            </td>
+                            <td class="text-white text-base py-2 pl-2">
+                                <span id="user-display-status"></span>
+                            </td>
+                        </tr>
+                        <tr>
+                            <td class="pr-3 pt-2 text-right">
+                                <i class="fa-solid fa-sticky-note fa-lg text-gray-400"></i>
+                            </td>
+                            <td class="text-white text-base pl-2 pt-2">
+                                <span id="user-display-nota"></span>
+                            </td>
+                        </tr>
+                    </tbody>
+                </table>
+            </div>
+            <button id="btn-renew-trigger" class="w-full py-3 px-6 bg-blue-600 text-white font-semibold rounded-lg shadow-md hover:bg-blue-700 transition duration-300 transform hover:scale-105 flex items-center justify-center text-center">
+                <i class="fa-solid fa-arrows-rotate mr-2"></i>
+                Renovar Suscripción
+            </button>
+        </div>
+    </div>
+
+    <div id="records-modal" class="fixed inset-0 mt-6 w-full h-full bg-black bg-opacity-70 z-50 hidden">       
+        <div class="modal-content p-6 w-full max-w-[420px] bg-gray-800 border border-gray-700 rounded-xl shadow-2xl absolute top-1/2 left-1/2 transform -translate-x-1/2 -translate-y-1/2 mx-0">
+            <button id="close-records-modal" class="absolute top-2 right-2 text-gray-400 hover:text-red-400 transition duration-300 focus:outline-none">
+                <i class="fa-solid fa-circle-xmark text-2xl"></i>
+            </button>            
+            <h3 class="text-xl font-bold text-white mt-4 mb-1 text-center">Registros Encontrados</h3>
+            <p class="text-xs text-gray-400 mb-1 text-center">Selecciona la cuenta con la que deseas renovar o actualizar:</p>           
+            <div id="modal-subscriber-name" class="text-center text-[18px] font-bold text-blue-400 uppercase tracking-wide mb-4"></div>
+            
+            <div class="overflow-x-auto max-h-64 rounded-lg border border-gray-700">
+                <table class="w-full text-left text-sm text-gray-200">
+                    <thead class="bg-gray-700 text-gray-300 uppercase text-xs sticky top-0">
+                        <tr>
+                            <th class="p-3">Datos de la Cuenta</th>
+                            <th class="p-3 text-center">Acción</th>
+                        </tr>
+                    </thead>
+                    <tbody id="records-table-body" class="divide-y divide-gray-700"></tbody>
+                </table>
+            </div>
+        </div>
+    </div>
+
+</body>
+
+<script>
+    // DOM Elements
+    const messageContainer = document.getElementById('message-container');
+    const authView = document.getElementById('auth-view'); const userView = document.getElementById('user-view');
+    const userLoginForm = document.getElementById('user-login-form'); const loginEmailInput = document.getElementById('login-email');
+    const loginClientIdxInput = document.getElementById('login-client-idx'); const userLoginBtn = document.getElementById('user-login-btn'); 
+    const userDisplayEmail = document.getElementById('user-display-email'); const userDisplayName = document.getElementById('user-display-name');
+    const userDisplayPhone = document.getElementById('user-display-phone'); const userDisplayFin = document.getElementById('user-display-fin');
+    const userDisplayStatus = document.getElementById('user-display-status'); const userDisplayNota = document.getElementById('user-display-nota');
+    const userLogoutBtn = document.getElementById('user-logout-btn');
+    
+    const appsScriptUrl = 'https://script.google.com/macros/s/AKfycbyMR-awXi14sm5xbCDMbVJL---U-XZFuwfc4DZOwdP7hSoCjdzidY4mYwaN0G1n-gx4Rg/exec'; 
+    const databaseScriptUrl = 'https://script.google.com/macros/s/AKfycbzklitTZsJlcvyH1p1CEzn89ldl0R45fm5nEZOFfYtDk84MrXR3n3qawycvj8SR8WJW7A/exec';
+
+    // --- State Variables ---
+    let appMode = 'auth'; let loggedInUser = null; let isUserLoginLoading = false; 
+
+    // --- Helper Functions ---
+    const showMessage = (msg, isError = false) => {
+        messageContainer.textContent = msg;
+        messageContainer.classList.remove('hidden', 'bg-blue-500', 'bg-red-500');
+        messageContainer.classList.add(isError ? 'bg-red-500' : 'bg-blue-500');
+        setTimeout(() => { messageContainer.classList.add('hidden'); }, 3000); 
+    };
+
+    const setAppMode = (mode) => {
+        appMode = mode;
+        authView.classList.add('hidden');
+        userView.classList.add('hidden');
+        
+        const logoutBtn = document.getElementById('user-logout-btn');
+        const appContainer = document.getElementById('app');
+        
+        // Limpieza profunda de clases de ancho dinámico previas
+        appContainer.classList.remove('max-w-md', 'max-w-xl', 'max-w-[440px]');
+
+        if (appMode === 'auth') {
+            authView.classList.remove('hidden');
+            logoutBtn.classList.add('hidden');
+            appContainer.classList.add('max-w-[440px]'); // Mantiene consistencia de 440px en login
+        } else if (appMode === 'userView') {
+            userView.classList.remove('hidden');
+            userView.classList.add('flex');
+            logoutBtn.classList.remove('hidden');
+            appContainer.classList.add('max-w-[440px]'); // Mantiene consistencia de 440px al renderizar datos
+        }
+    };
+
+    // --- Event Handlers ---
+    const handleLogin = async (e) => {
+        e.preventDefault();
+        const email = loginEmailInput.value.toLowerCase();
+        const phone = loginClientIdxInput.value.toLowerCase();
+
+        if (!email || !phone) {
+            showMessage("Por favor, introduce tu correo y teléfono para iniciar sesión.", true);
+            return;
+        }
+
+        console.log("Datos a enviar:", { email: email, phone: phone });
+
+        isUserLoginLoading = true;
+        userLoginBtn.innerHTML = `<i class="fa-solid fa-circle-notch fa-spin mr-2"></i>Validando datos...`;
+        userLoginBtn.disabled = true;
+
+        try {
+            const payload = { action: 'login', email: email, phone: phone };
+            const response = await fetch(appsScriptUrl, {
+                method: 'POST',
+                mode: 'cors',
+                cache: 'no-cache',
+                headers: { 'Content-Type': 'text/plain;charset=utf-8' },
+                body: JSON.stringify(payload),
+            });
+
+            if (!response.ok) throw new Error(`Error en el servidor: ${response.statusText}`);
+
+            const result = await response.json();
+            if (result.success === false) {
+                showMessage(result.error, true);
+                return;
+            }
+            
+            loggedInUser = result;
+            setAppMode('userView');
+            
+            const rawDate = loggedInUser.Tabla_Fecha_Fin;
+            const dateObj = new Date(rawDate);
+            const day = String(dateObj.getDate()).padStart(2, '0');
+            const month = String(dateObj.getMonth() + 1).padStart(2, '0');
+            const year = dateObj.getFullYear();
+            const formattedDate = `${day}/${month}/${year}`;
+
+            userDisplayEmail.textContent = loggedInUser.Tabla_Cliente_Correo;
+            userDisplayName.textContent = loggedInUser.Tabla_Cliente_Nombre;
+            userDisplayPhone.textContent = loggedInUser.Cliente_Telefono;
+            userDisplayFin.textContent = formattedDate;
+
+            let subscriptionStatus;
+            if (!loggedInUser.Tabla_Renovacion_Status || loggedInUser.Tabla_Renovacion_Status.trim() === '') {
+                subscriptionStatus = 'ACTIVA';
+            } else {
+                subscriptionStatus = 'VENCIDA';
+            }
+            userDisplayStatus.textContent = subscriptionStatus;
+
+            localStorage.setItem('userDisplayEmail', loggedInUser.Tabla_Cliente_Correo);
+            localStorage.setItem('userDisplayPhone', loggedInUser.Cliente_Telefono);
+            localStorage.setItem('userDisplayStatus', subscriptionStatus);
+
+            let subscriptionNote = loggedInUser.Suscripcion_Nota;
+            const currentDate = new Date();
+            const subscriptionEndDate = new Date(loggedInUser.Tabla_Fecha_Fin);
+            
+            if ((!loggedInUser.Tabla_Renovacion_Status || loggedInUser.Tabla_Renovacion_Status.trim() === '') && subscriptionEndDate < currentDate) {
+                subscriptionNote = 'EN REVISIÓN';
+            }
+            userDisplayNota.textContent = subscriptionNote;
+
+            loginEmailInput.value = '';
+            loginClientIdxInput.value = '';
+
+        } catch (error) {
+            console.error("Error al conectar con el servidor:", error);
+            showMessage(`Error al conectar con el servidor: ${error.message}`, true);
+        } finally {
+            isUserLoginLoading = false;
+            userLoginBtn.innerHTML = 'Procesar';
+            userLoginBtn.disabled = false;
+        }
+    };
+
+    const handleLogout = () => {
+        loggedInUser = null;
+        setAppMode('auth');
+        showLogoutModal();
+    };
+
+    const showLogoutModal = () => {
+        const authView = document.getElementById('auth-view');
+        if (!authView) return;
+        
+        const modal = document.createElement('div');
+        modal.className = "absolute top-1/2 left-1/2 transform -translate-x-1/2 -translate-y-1/2 bg-gray-300 backdrop-blur-md text-gray-800 px-6 py-6 rounded-xl shadow-2xl flex flex-col items-center justify-center space-y-3 z-50 animate-fade-in w-5/6 max-w-xs text-center border border-white/20";
+        modal.innerHTML = `
+            <i class="fa-solid fa-circle-check text-green-600 text-5xl drop-shadow-sm"></i>
+            <span class="font-bold text-lg tracking-wide text-gray-700">Sesión cerrada</span>
+        `;
+        
+        authView.appendChild(modal);
+        setTimeout(() => {
+            modal.classList.add('opacity-0', 'transition-opacity', 'duration-500');
+            setTimeout(() => modal.remove(), 500);
+        }, 1200);
+    };
+
+    document.getElementById('btn-renew-trigger').addEventListener('click', async () => {
+        const email = localStorage.getItem('userDisplayEmail');
+        const phone = localStorage.getItem('userDisplayPhone');
+        const triggerBtn = document.getElementById('btn-renew-trigger');
+
+        if (!email && !phone) {
+            showMessage("No se encontraron credenciales activas en la sesión.", true);
+            return;
+        }
+
+        const originalText = triggerBtn.innerHTML;
+        triggerBtn.innerHTML = `<i class="fa-solid fa-circle-notch fa-spin mr-2"></i>Buscando registros...`;
+        triggerBtn.disabled = true;
+
+        try {
+            const payload = { action: 'search_records', email: email, phone: phone };
+            const response = await fetch(databaseScriptUrl, {
+                method: 'POST',
+                headers: { 'Content-Type': 'text/plain;charset=utf-8' },
+                body: JSON.stringify(payload)
+            });
+
+            if (!response.ok) throw new Error("Error en la respuesta de la base de datos de suscripciones.");
+            
+            const result = await response.json();
+
+            // FALLBACK SEGURIDAD: Si no hay registros previos, reemplazamos la ventana actual sin dejar rastro en el historial
+            if (!result.success || !result.records || result.records.length === 0) {
+                window.location.replace('Form GYTVIP.html');
+                return;
+            }
+
+            // Mapeamos y guardamos la lista completa de IDs detectados para la desestructuración del descarte
+            const allFetchedIds = result.records.map(r => r.Id);
+
+            // Extraemos el nombre del suscriptor del primer registro e inyectamos en la cabecera
+            const subscriberName = result.records[0].Nombre || 'N/A';
+            document.getElementById('modal-subscriber-name').textContent = subscriberName;
+
+            const tbody = document.getElementById('records-table-body');
+            tbody.innerHTML = '';
+
+            result.records.forEach(record => {
+                const tr = document.createElement('tr');
+                tr.className = "hover:bg-gray-700/40 transition-colors";
+                tr.innerHTML = `
+                    <td class="p-3 text-[14px] space-y-0.5">
+                        <div class="text-blue-400 font-bold tracking-wider">${record.User || 'N/A'}</div>
+                        <div class="text-gray-400 font-medium">${record.Telefono}</div>
+                        <div class="text-gray-200 truncate max-w-[220px]">${record.Correo}</div> 
+                    </td>
+                    <td class="p-3 text-center vertical-middle">
+                        <button class="select-record-btn px-3 py-1.5 bg-blue-600 hover:bg-blue-700 text-white rounded-md text-xs font-semibold transition shadow-md" 
+                                data-email="${record.Correo}" data-phone="${record.Telefono}" data-user="${record.User || ''}" data-id="${record.Id || ''}">
+                            Seleccionar
+                        </button>
+                    </td>
+                `;
+                tbody.appendChild(tr);
+            });
+
+            // Asignación de controladores: Estrategia de segundo plano pura con reemplazo destructivo de historial
+            document.querySelectorAll('.select-record-btn').forEach(btn => {
+                btn.addEventListener('click', (e) => {
+                    const target = e.currentTarget;
+                    const selectedId = target.getAttribute('data-id');
+                    const selectedUser = target.getAttribute('data-user');
+                    
+                    // Filtramos los IDs que no corresponden al seleccionado para descartarlos
+                    const discardedIds = allFetchedIds.filter(id => String(id) !== String(selectedId));
+
+                    if (discardedIds.length > 0) {
+                        const discardPayload = {
+                            action: 'discard_records',
+                            selectedId: selectedId,
+                            discardedIds: discardedIds,
+                            operatorUser: selectedUser || "UserSys"
+                        };
+
+                        // Convertimos el objeto en un Blob con el tipo de contenido que espera el backend
+                        const blob = new Blob([JSON.stringify(discardPayload)], { type: 'text/plain;charset=utf-8' });
+                        
+                        // Transmisión asíncrona indestructible de fondo (Garantiza que llegue a Google Apps Script)
+                        navigator.sendBeacon(databaseScriptUrl, blob);
+                    }
+
+                    // Sincronización y persistencia local inmediata de la cuenta elegida
+                    localStorage.setItem('userDisplayEmail', target.getAttribute('data-email'));
+                    localStorage.setItem('userDisplayPhone', target.getAttribute('data-phone'));
+                    localStorage.setItem('userDisplayLogin', selectedUser);
+                    localStorage.setItem('selectedRecordId', selectedId);
+                    localStorage.setItem('userDisplayName', document.getElementById('modal-subscriber-name').textContent);
+                    
+                    // REDIRECCIÓN CONTROLADA SOBRE LA MISMA VENTANA:
+                    // Reemplaza la sesión en el historial para que no puedan volver atrás con el navegador
+                    window.location.replace('Form GYTVIP.html');
+                });
+            });
+            
+            document.getElementById('records-modal').classList.remove('hidden');
+
+        } catch (error) {
+            console.error("Error en la validación del segundo archivo:", error);
+            showMessage("No se pudo conectar con la base de datos de renovaciones.", true);
+        } finally {
+            triggerBtn.innerHTML = originalText;
+            triggerBtn.disabled = false;
+        }
+    });
+
+    // --- Setup Unificado de Event Listeners (Previne colisiones de carga en el DOM) ---
+    window.onload = () => {
+        setAppMode('auth'); 
+        userLoginForm.addEventListener('submit', handleLogin);
+        userLogoutBtn.addEventListener('click', handleLogout);
+
+        document.getElementById('close-records-modal').addEventListener('click', () => {
+            document.getElementById('records-modal').classList.add('hidden');
+        });
+
+        document.getElementById('records-modal').addEventListener('click', (e) => {
+            if (e.target.id === 'records-modal') {
+                document.getElementById('records-modal').classList.add('hidden');
+            }
+        });
+    };
+</script>
+
+
+</html>
